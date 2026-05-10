@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9159627372051459184}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: World
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 3031210613221377360}
   - component: {fileID: 7778865925643307649}
   - component: {fileID: 9169551088663944796}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 1551304258331545174}
   - component: {fileID: 3081663131424001716}
   - component: {fileID: 5071734727417256185}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -297,10 +297,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
@@ -331,6 +327,10 @@ PrefabInstance:
     - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4040685249421190076, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8920259089154751975, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_Name

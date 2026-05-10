@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMover : MonoBehaviour
+public class PlayerMover : BillboardObject
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
@@ -10,7 +10,6 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
-    [SerializeField] private float shotSpawnDistance = 0.4f;
 
     private Vector2 moveInput;
 
@@ -26,35 +25,31 @@ public class PlayerMover : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 up = Camera.main.transform.up;
+        var up = cam.transform.up;
         up.y = 0f;
         up.Normalize();
 
-        Vector3 right = Camera.main.transform.right;
+        var right = cam.transform.right;
         right.y = 0f;
         right.Normalize();
 
-        Vector3 moveDirection = (right * moveInput.x) + (up * moveInput.y);
-        if (moveDirection.sqrMagnitude > 1f)
-        {
-            moveDirection.Normalize();
-        }
+        var moveDirection = (right * moveInput.x) + (up * moveInput.y);
+        moveDirection.Normalize();
 
-        Vector3 nextPosition = rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime);
+        var nextPosition = rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime);
         rb.MovePosition(nextPosition);
     }
 
     private void Shoot()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        float distance = (rb.position.y - ray.origin.y) / ray.direction.y;
-        Vector3 targetPosition = ray.GetPoint(distance);
-        Vector3 shotDirection = targetPosition - rb.position;
+        var ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        var distance = (rb.position.y - ray.origin.y) / ray.direction.y;
+        var targetPosition = ray.GetPoint(distance);
+        var shotDirection = targetPosition - rb.position;
         shotDirection.y = 0f;
         shotDirection.Normalize();
 
-        Vector3 shotStartPosition = rb.position + (shotDirection * shotSpawnDistance);
-        ShotProjectile shotInstance = Instantiate(shotPrefab, shotStartPosition, Quaternion.identity);
-        shotInstance.Initialize(shotDirection, shotSpeed, shotRange, playerCollider);
+        var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(shotDirection, shotSpeed, shotRange);
     }
 }

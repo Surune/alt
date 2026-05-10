@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShotProjectile : MonoBehaviour
+public class ShotProjectile : BillboardObject
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
@@ -10,13 +10,12 @@ public class ShotProjectile : MonoBehaviour
     private float speed;
     private float maxDistance;
 
-    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, Collider ownerCollider)
+    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange)
     {
         direction = shotDirection;
         startPosition = rb.position;
         speed = shotSpeed;
         maxDistance = shotRange;
-        Physics.IgnoreCollision(shotCollider, ownerCollider);
         rb.linearVelocity = direction * speed;
     }
 
@@ -24,7 +23,7 @@ public class ShotProjectile : MonoBehaviour
     {
         rb.linearVelocity = direction * speed;
 
-        Vector3 distanceVector = rb.position - startPosition;
+        var distanceVector = rb.position - startPosition;
         if (distanceVector.sqrMagnitude >= maxDistance * maxDistance)
         {
             Destroy(gameObject);

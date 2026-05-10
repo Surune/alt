@@ -1,10 +1,15 @@
 using UnityEngine;
 
-public class BillboardObject : MonoBehaviour
+public abstract class BillboardObject : MonoBehaviour
 {
-    private Camera cam => Camera.main;
+    protected Camera cam;
 
-    private void LateUpdate()
+    protected virtual void Awake()
+    {
+        cam = Camera.main;
+    }
+
+    protected virtual void LateUpdate()
     {
         transform.forward = cam.transform.forward;
     }
