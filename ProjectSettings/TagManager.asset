@@ -15,8 +15,8 @@ TagManager:
   - Terrain
   - Player_Character
   - Player_Projectile
-  - 
-  - 
+  - Enemy_Character
+  - Enemy_Projectile
   - 
   - 
   - 
