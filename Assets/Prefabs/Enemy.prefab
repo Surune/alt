@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7204659990718691648}
   - component: {fileID: 8882066633139990214}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 626701337628292172}
   - component: {fileID: 3872146506243029011}
   - component: {fileID: 2137009533644348120}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,6 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 3872146506243029011}
+  maxHealth: 3
   awarenessRange: 12
   preferredDistance: 6
   distanceSlack: 1.5

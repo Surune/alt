@@ -4,6 +4,7 @@ public class ShotProjectile : BillboardObject
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
+    [SerializeField] private int damage = 1;
 
     private Vector3 direction;
     private Vector3 startPosition;
@@ -26,6 +27,16 @@ public class ShotProjectile : BillboardObject
         var distanceVector = rb.position - startPosition;
         if (distanceVector.sqrMagnitude >= maxDistance * maxDistance)
         {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        var enemy = collision.gameObject.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
             Destroy(gameObject);
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine.AI;
 public class Enemy : BillboardObject
 {
     [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private int maxHealth = 3;
     [SerializeField] private float awarenessRange = 12f;
     [SerializeField] private float preferredDistance = 6f;
     [SerializeField] private float distanceSlack = 1.5f;
@@ -15,11 +16,13 @@ public class Enemy : BillboardObject
 
     private Transform player;
     private float nextRepathTime;
+    private int currentHealth;
 
     protected override void Awake()
     {
         base.Awake();
         player = FindFirstObjectByType<PlayerMover>().transform;
+        currentHealth = maxHealth;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
@@ -88,5 +91,14 @@ public class Enemy : BillboardObject
         }
 
         agent.SetDestination(sampledPosition);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }
