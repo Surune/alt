@@ -81,12 +81,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 291613271, guid: a78afa58393d14aaab1a16f84c30d9a1, type: 3}
+  m_Sprite: {fileID: -1707309241, guid: 4dd410d46fee7e545a09e56de2a20943, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.390625, y: 0.546875}
+  m_Size: {x: 0.64, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 3872146506243029011}
   - component: {fileID: 2137009533644348120}
   m_Layer: 10
-  m_Name: Enemy
+  m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -173,8 +173,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.25, y: 0.25, z: 0.25}
-  m_Center: {x: 0, y: 0.125, z: 0}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &3872146506243029011
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -184,8 +184,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 8920259089154751975}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.2
-  m_Speed: 4.2
+  m_Radius: 0.35
+  m_Speed: 3.8
   m_Acceleration: 12
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -193,7 +193,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 0.5
+  m_Height: 0.8
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -210,12 +210,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 3872146506243029011}
-  maxHealth: 3
+  shotPrefab: {fileID: 4452706447385332178, guid: 838cdf2e2b9345ac97d7481101819c5f, type: 3}
+  maxHealth: 40
   experiencePickupPrefab: {fileID: 5717418940973757742, guid: 9d43aec0d42f45329dc7ccb645fc5d1d, type: 3}
-  awarenessRange: 12
-  preferredDistance: 6
-  distanceSlack: 1.5
-  retreatStep: 3
-  strafeDistance: 2
-  strafeFrequency: 1.5
+  awarenessRange: 16
+  preferredDistance: 7
+  distanceSlack: 1.75
+  retreatStep: 3.5
+  strafeDistance: 2.8
+  strafeFrequency: 1.8
   repathInterval: 0.2
+  patternCooldown: 1.6
+  shotSpeed: 6.5
+  shotRange: 20
+  aimedBurstWaveCount: 3
+  aimedBurstShotCount: 5
+  aimedBurstSpreadAngle: 42
+  aimedBurstWaveInterval: 0.28
+  radialNovaShotCount: 12
+  radialNovaWaveCount: 2
+  radialNovaWaveInterval: 0.45
+  spiralSweepStepCount: 10
+  spiralSweepShotCount: 3
+  spiralSweepSpacingAngle: 18
+  spiralSweepRotationPerStep: 24
+  spiralSweepStepInterval: 0.12
