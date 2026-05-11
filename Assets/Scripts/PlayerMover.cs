@@ -7,11 +7,19 @@ public class PlayerMover : BillboardObject
     [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private ShotProjectile shotPrefab;
+    [SerializeField] private int maxHealth = 3;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
 
     private Vector2 moveInput;
+    private int currentHealth;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        currentHealth = maxHealth;
+    }
 
     private void Update()
     {
@@ -51,5 +59,14 @@ public class PlayerMover : BillboardObject
 
         var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(shotDirection, shotSpeed, shotRange);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }
