@@ -14,6 +14,7 @@ public class PlayerMover : BillboardObject
 
     private Vector2 moveInput;
     private int currentHealth;
+    private int currentExperience;
 
     protected override void Awake()
     {
@@ -68,5 +69,10 @@ public class PlayerMover : BillboardObject
         {
             Destroy(gameObject);
         }
+    }
+
+    public void AddExperience(int amount)
+    {
+        currentExperience += amount;
     }
 }

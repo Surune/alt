@@ -6,6 +6,7 @@ public class Enemy : BillboardObject
 {
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private int maxHealth = 3;
+    [SerializeField] private ExperiencePickup experiencePickupPrefab;
     [SerializeField] private float awarenessRange = 12f;
     [SerializeField] private float preferredDistance = 6f;
     [SerializeField] private float distanceSlack = 1.5f;
@@ -23,6 +24,7 @@ public class Enemy : BillboardObject
         base.Awake();
         player = FindFirstObjectByType<PlayerMover>().transform;
         currentHealth = maxHealth;
+        agent.baseOffset = 0f;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
@@ -95,6 +97,10 @@ public class Enemy : BillboardObject
 
     public void TakeDamage(int damage)
     {
+        var droppedExperience = Mathf.Min(damage, currentHealth);
+        var exp = Instantiate(experiencePickupPrefab, transform.position, Quaternion.identity);
+        exp.Init(droppedExperience);
+        
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
