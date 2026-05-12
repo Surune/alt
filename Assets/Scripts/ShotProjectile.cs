@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShotProjectile : BillboardObject
+public class ShotProjectile : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;

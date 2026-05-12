@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ExperiencePickup : BillboardObject
+public class ExperiencePickup : MonoBehaviour
 {
     private int amount;
 

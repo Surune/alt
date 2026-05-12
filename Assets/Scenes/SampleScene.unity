@@ -180,6 +180,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: World
       objectReference: {fileID: 0}
+    - target: {fileID: 8274243590514133516, guid: cab60036217bb9f428f355b5b7e770ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 9159627372051459184, guid: cab60036217bb9f428f355b5b7e770ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0

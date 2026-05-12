@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Enemy : BillboardObject
+public class Enemy : MonoBehaviour
 {
     private enum BossPattern
     {
@@ -49,9 +49,8 @@ public class Enemy : BillboardObject
     private bool isPatternActive;
     private BossPattern activePattern;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         player = FindFirstObjectByType<PlayerMover>().transform;
         currentHealth = maxHealth;
         nextPatternTime = Time.time + patternCooldown;

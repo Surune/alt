@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMover : BillboardObject
+public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
@@ -15,10 +15,11 @@ public class PlayerMover : BillboardObject
     private Vector2 moveInput;
     private int currentHealth;
     private int currentExperience;
+    private Camera cam;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        cam = Camera.main;
         currentHealth = maxHealth;
     }
 
@@ -43,6 +44,14 @@ public class PlayerMover : BillboardObject
         right.Normalize();
 
         var moveDirection = (right * moveInput.x) + (up * moveInput.y);
+        var aimDirection = GetAimDirection();
+
+        if (aimDirection.sqrMagnitude > 0f)
+        {
+            var targetRotation = Quaternion.LookRotation(aimDirection, Vector3.up);
+            rb.MoveRotation(targetRotation);
+        }
+
         moveDirection.Normalize();
 
         var nextPosition = rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime);
@@ -51,15 +60,19 @@ public class PlayerMover : BillboardObject
 
     private void Shoot()
     {
+        var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(GetAimDirection(), shotSpeed, shotRange);
+    }
+
+    private Vector3 GetAimDirection()
+    {
         var ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         var distance = (rb.position.y - ray.origin.y) / ray.direction.y;
         var targetPosition = ray.GetPoint(distance);
-        var shotDirection = targetPosition - rb.position;
-        shotDirection.y = 0f;
-        shotDirection.Normalize();
-
-        var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(shotDirection, shotSpeed, shotRange);
+        var aimDirection = targetPosition - rb.position;
+        aimDirection.y = 0f;
+        aimDirection.Normalize();
+        return aimDirection;
     }
 
     public void TakeDamage(int damage)
