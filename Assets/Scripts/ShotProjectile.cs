@@ -38,6 +38,13 @@ public class ShotProjectile : BillboardObject
         {
             enemy.TakeDamage(damage);
             Destroy(gameObject);
+            return;
+        }
+
+        var collidedGameObject = collision.gameObject;
+        if (collidedGameObject.CompareTag("Obstacle"))
+        {
+            Destroy(gameObject);
         }
     }
 }

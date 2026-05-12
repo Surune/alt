@@ -33,12 +33,17 @@ public class EnemyProjectile : BillboardObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!collision.gameObject.TryGetComponent<PlayerMover>(out var player))
+        if (collision.gameObject.TryGetComponent<PlayerMover>(out var player))
         {
+            player.TakeDamage(damage);
+            Destroy(gameObject);
             return;
         }
 
-        player.TakeDamage(damage);
-        Destroy(gameObject);
+        var collidedGameObject = collision.gameObject;
+        if (collidedGameObject.CompareTag("Obstacle"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
