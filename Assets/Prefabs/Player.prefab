@@ -108,6 +108,7 @@ MonoBehaviour:
   rollDuration: 0.3
   shotSpeed: 12
   shotRange: 10
+  shotInterval: 0.15
 --- !u!1001 &7596266864359351710
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -16,6 +16,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float rollDuration = 0.3f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
+    [SerializeField] private float shotInterval = 0.15f;
 
     private Vector2 moveInput;
     private Vector3 rollDirection;
@@ -25,6 +26,7 @@ public class PlayerMover : MonoBehaviour
     private int currentHealth;
     private int currentExperience;
     private Camera cam;
+    private float nextShotTime;
 
     public bool IsRolling => Time.time < rollEndTime;
     public bool IsInvincible => IsRolling;
@@ -39,7 +41,7 @@ public class PlayerMover : MonoBehaviour
     {
         moveInput = moveAction.action.ReadValue<Vector2>();
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
         {
             Shoot();
         }
@@ -114,6 +116,7 @@ public class PlayerMover : MonoBehaviour
     {
         var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(GetAimDirection(), shotSpeed, shotRange);
+        nextShotTime = Time.time + shotInterval;
     }
 
     private void UseFearShot()
