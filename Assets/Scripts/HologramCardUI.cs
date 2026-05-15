@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
     [Header("Foil")]
     [SerializeField] private float foilOpacity = 0.8f;
 
+    private Action clickAction;
     private Material foilMat;
     private Quaternion targetRotation;
 
@@ -28,7 +30,7 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
 
     private void Update()
     {
-        cardRoot.localRotation = Quaternion.Lerp(cardRoot.localRotation, targetRotation, Time.deltaTime * smooth);
+        cardRoot.localRotation = Quaternion.Lerp(cardRoot.localRotation, targetRotation, Time.unscaledDeltaTime * smooth);
     }
 
     public void OnPointerMove(PointerEventData eventData)
@@ -50,10 +52,9 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
 
         targetRotation = Quaternion.Euler(rotX, rotY, 0f);
 
-        var foilPos = new Vector2(
-            Mathf.InverseLerp(-1f, 1f, nx),
-            Mathf.InverseLerp(-1f, 1f, ny)
-        );
+        var foilPos = Vector4.zero;
+        foilPos.x = Mathf.InverseLerp(-1f, 1f, nx);
+        foilPos.y = Mathf.InverseLerp(-1f, 1f, ny);
 
         foilMat.SetVector("_FoilPosition", foilPos);
         foilMat.SetFloat("_Opacity", foilOpacity);
@@ -61,12 +62,17 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Destroy(gameObject);
+        clickAction();
     }
     
     public void OnPointerExit(PointerEventData eventData)
     {
         targetRotation = Quaternion.identity;
         foilMat.SetFloat("_Opacity", 0f);
+    }
+
+    public void SetClickAction(Action action)
+    {
+        clickAction = action;
     }
 }

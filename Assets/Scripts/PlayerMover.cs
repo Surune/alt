@@ -24,7 +24,6 @@ public class PlayerMover : MonoBehaviour
     private float rollStartTime;
     private float rollEndTime;
     private int currentHealth;
-    private int currentExperience;
     private Camera cam;
     private float nextShotTime;
 
@@ -39,6 +38,12 @@ public class PlayerMover : MonoBehaviour
 
     private void Update()
     {
+        if (!GameStateManager.Instance.IsGameplayActive)
+        {
+            moveInput = Vector2.zero;
+            return;
+        }
+
         moveInput = moveAction.action.ReadValue<Vector2>();
 
         if (Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
@@ -59,6 +64,11 @@ public class PlayerMover : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GameStateManager.Instance.IsGameplayActive)
+        {
+            return;
+        }
+
         var up = cam.transform.up;
         up.y = 0f;
         up.Normalize();
@@ -172,6 +182,6 @@ public class PlayerMover : MonoBehaviour
 
     public void AddExperience(int amount)
     {
-        currentExperience += amount;
+        ExperienceManager.Instance.AddExperience(amount);
     }
 }

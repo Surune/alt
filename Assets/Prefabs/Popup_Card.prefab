@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 3036526436679461643}
   - component: {fileID: 5052796876120784721}
   - component: {fileID: 6174865387244065251}
+  - component: {fileID: 3779507375763760176}
   m_Layer: 5
   m_Name: Popup_Card
   m_TagString: Untagged
@@ -243,6 +244,22 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3779507375763760176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5457051394418818594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d6958d1680449e9895e865bc67247de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cards:
+  - {fileID: 433163546163867780}
+  - {fileID: 433163546163867781}
+  - {fileID: 433163546163867782}
 --- !u!1001 &78400008974205917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -343,6 +360,11 @@ PrefabInstance:
 --- !u!224 &485009030220705830 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 553258033877283835, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
+  m_PrefabInstance: {fileID: 78400008974205917}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &433163546163867782 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 433163546163867781, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
   m_PrefabInstance: {fileID: 78400008974205917}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &306397106438912981
@@ -447,6 +469,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 553258033877283835, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
   m_PrefabInstance: {fileID: 306397106438912981}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &433163546163867781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 433163546163867781, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
+  m_PrefabInstance: {fileID: 306397106438912981}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8147411441903231243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -547,5 +574,10 @@ PrefabInstance:
 --- !u!224 &8555989137654190832 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 553258033877283835, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
+  m_PrefabInstance: {fileID: 8147411441903231243}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &433163546163867780 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 433163546163867781, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
   m_PrefabInstance: {fileID: 8147411441903231243}
   m_PrefabAsset: {fileID: 0}

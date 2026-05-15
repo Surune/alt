@@ -67,6 +67,11 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if (!GameStateManager.Instance.IsGameplayActive)
+        {
+            return;
+        }
+
         UpdateFacing();
         UpdateMovement();
         UpdatePattern();
