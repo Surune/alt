@@ -7,17 +7,27 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
+    [SerializeField] private InputActionReference rollAction;
     [SerializeField] private ShotProjectile shotPrefab;
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float rollSpeed = 8f;
+    [SerializeField] private float rollDuration = 0.3f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
 
     private Vector2 moveInput;
+    private Vector3 rollDirection;
+    private Quaternion rollBaseRotation;
+    private float rollStartTime;
+    private float rollEndTime;
     private int currentHealth;
     private int currentExperience;
     private Camera cam;
+
+    public bool IsRolling => Time.time < rollEndTime;
+    public bool IsInvincible => IsRolling;
 
     private void Awake()
     {
@@ -38,6 +48,11 @@ public class PlayerMover : MonoBehaviour
         {
             UseFearShot();
         }
+        
+        if (rollAction.action.WasPressedThisFrame())
+        {
+            StartRoll();
+        }
     }
 
     private void FixedUpdate()
@@ -53,6 +68,17 @@ public class PlayerMover : MonoBehaviour
         var moveDirection = (right * moveInput.x) + (up * moveInput.y);
         var aimDirection = GetAimDirection();
 
+        if (IsRolling)
+        {
+            var rollPosition = rb.position + (rollDirection * rollSpeed * Time.fixedDeltaTime);
+            var rollProgress = (Time.time - rollStartTime) / rollDuration;
+            var rollRotation = rollBaseRotation * Quaternion.Euler(rollProgress * 360f, 0f, 0f);
+
+            rb.MoveRotation(rollRotation);
+            rb.MovePosition(rollPosition);
+            return;
+        }
+
         if (aimDirection.sqrMagnitude > 0f)
         {
             var targetRotation = Quaternion.LookRotation(aimDirection, Vector3.up);
@@ -63,6 +89,25 @@ public class PlayerMover : MonoBehaviour
 
         var nextPosition = rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime);
         rb.MovePosition(nextPosition);
+    }
+
+    private void StartRoll()
+    {
+        var moveDirection = GetMoveDirection();
+        if (moveDirection.sqrMagnitude > 0f)
+        {
+            rollDirection = moveDirection;
+        }
+        else
+        {
+            rollDirection = transform.forward;
+            rollDirection.y = 0f;
+            rollDirection.Normalize();
+        }
+
+        rollBaseRotation = rb.rotation;
+        rollStartTime = Time.time;
+        rollEndTime = Time.time + rollDuration;
     }
 
     private void Shoot()
@@ -93,8 +138,28 @@ public class PlayerMover : MonoBehaviour
         return aimDirection;
     }
 
+    private Vector3 GetMoveDirection()
+    {
+        var up = cam.transform.up;
+        up.y = 0f;
+        up.Normalize();
+
+        var right = cam.transform.right;
+        right.y = 0f;
+        right.Normalize();
+
+        var moveDirection = (right * moveInput.x) + (up * moveInput.y);
+        moveDirection.Normalize();
+        return moveDirection;
+    }
+
     public void TakeDamage(int damage)
     {
+        if (IsInvincible)
+        {
+            return;
+        }
+
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
