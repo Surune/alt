@@ -96,10 +96,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 6613040455332606920}
-  playerCollider: {fileID: 0}
+  playerCollider: {fileID: 6440261403373862725}
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  fearShotAction: {fileID: -3356157255947718216, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   shotPrefab: {fileID: 4452706447385332178, guid: 4ce47ab5ca1328e46853a760d2a484e0, type: 3}
   maxHealth: 3
+  fearShotCount: 1
   moveSpeed: 5
   shotSpeed: 12
   shotRange: 10

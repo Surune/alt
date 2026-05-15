@@ -6,8 +6,10 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
+    [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private ShotProjectile shotPrefab;
     [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
@@ -30,6 +32,11 @@ public class PlayerMover : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             Shoot();
+        }
+
+        if (fearShotAction.action.WasPressedThisFrame())
+        {
+            UseFearShot();
         }
     }
 
@@ -62,6 +69,17 @@ public class PlayerMover : MonoBehaviour
     {
         var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(GetAimDirection(), shotSpeed, shotRange);
+    }
+
+    private void UseFearShot()
+    {
+        if (fearShotCount <= 0)
+        {
+            return;
+        }
+
+        fearShotCount--;
+        EnemyProjectile.ClearAll();
     }
 
     private Vector3 GetAimDirection()

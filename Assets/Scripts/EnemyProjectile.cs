@@ -6,10 +6,22 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private Collider shotCollider;
     [SerializeField] private int damage = 1;
 
+    private static readonly System.Collections.Generic.List<EnemyProjectile> ActiveProjectiles = new();
+
     private Vector3 direction;
     private Vector3 startPosition;
     private float speed;
     private float maxDistance;
+
+    private void OnEnable()
+    {
+        ActiveProjectiles.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        ActiveProjectiles.Remove(this);
+    }
 
     public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange)
     {
@@ -44,6 +56,14 @@ public class EnemyProjectile : MonoBehaviour
         if (collidedGameObject.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
+        }
+    }
+
+    public static void ClearAll()
+    {
+        for (var i = ActiveProjectiles.Count - 1; i >= 0; i--)
+        {
+            Destroy(ActiveProjectiles[i].gameObject);
         }
     }
 }
