@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float strafeDistance = 2f;
     [SerializeField] private float strafeFrequency = 1.5f;
     [SerializeField] private float repathInterval = 0.2f;
+    [SerializeField] private float turnSpeed = 720f;
     [SerializeField] private float patternCooldown = 2f;
     [SerializeField] private float shotSpeed = 6f;
     [SerializeField] private float shotRange = 18f;
@@ -66,8 +67,23 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        UpdateFacing();
         UpdateMovement();
         UpdatePattern();
+    }
+
+    private void UpdateFacing()
+    {
+        var direction = player.position - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        var targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
     }
 
     private void UpdateMovement()
