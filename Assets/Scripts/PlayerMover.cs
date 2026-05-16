@@ -17,6 +17,8 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotRange = 10f;
     [SerializeField] private float shotInterval = 0.15f;
+    [SerializeField] private int magazineSize = 6;
+    [SerializeField] private float reloadDuration = 1.5f;
 
     private Vector2 moveInput;
     private Vector3 rollDirection;
@@ -24,16 +26,20 @@ public class PlayerMover : MonoBehaviour
     private float rollStartTime;
     private float rollEndTime;
     private int currentHealth;
+    private int currentAmmo;
     private Camera cam;
     private float nextShotTime;
+    private float reloadEndTime;
 
     public bool IsRolling => Time.time < rollEndTime;
     public bool IsInvincible => IsRolling;
+    private bool IsReloading => Time.time < reloadEndTime;
 
     private void Awake()
     {
         cam = Camera.main;
         currentHealth = maxHealth;
+        currentAmmo = magazineSize;
     }
 
     private void Update()
@@ -46,7 +52,12 @@ public class PlayerMover : MonoBehaviour
 
         moveInput = moveAction.action.ReadValue<Vector2>();
 
-        if (Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (!IsReloading && currentAmmo <= 0)
+        {
+            StartReload();
+        }
+
+        if (!IsReloading && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
         {
             Shoot();
         }
@@ -126,7 +137,21 @@ public class PlayerMover : MonoBehaviour
     {
         var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(GetAimDirection(), shotSpeed, shotRange);
+        currentAmmo--;
         nextShotTime = Time.time + shotInterval;
+
+        if (currentAmmo <= 0)
+        {
+            StartReload();
+        }
+    }
+
+    private void StartReload()
+    {
+        reloadEndTime = Time.time + reloadDuration;
+        currentAmmo = magazineSize;
+        nextShotTime = reloadEndTime;
+        Debug.Log("Reload started");
     }
 
     private void UseFearShot()
