@@ -1,19 +1,20 @@
-using System;
 using UnityEngine;
 
 public class PopupCardUI : MonoBehaviour
 {
-    [SerializeField] private HologramCardUI[] cards;
-
+    [SerializeField] private Transform cardRoot;
+    [SerializeField] private HologramCardUI cardPrefab;
+    
     private void Awake()
     {
-        for (var i = 0; i < cards.Length; i++)
+        for (var i = 0; i < 3; i++)
         {
-            cards[i].SetClickAction(Close);
+            var card = Instantiate(cardPrefab, cardRoot);
+            card.SetClickAction(Close);
         }
     }
 
-    public void Close()
+    private void Close()
     {
         UIManager.Instance.ClosePopupCard();
     }
