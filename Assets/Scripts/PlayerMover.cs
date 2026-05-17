@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class PlayerMover : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
+    public static event Action<int, int> HealthChanged;
 
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
@@ -37,6 +38,8 @@ public class PlayerMover : MonoBehaviour
 
     public bool IsRolling => Time.time < rollEndTime;
     public bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
     private bool IsReloading => Time.time < reloadEndTime;
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
     private int currentWeaponIndex;
@@ -45,6 +48,7 @@ public class PlayerMover : MonoBehaviour
     {
         cam = Camera.main;
         currentHealth = maxHealth;
+        NotifyHealthChanged();
     }
     
     private void Start()
@@ -311,6 +315,7 @@ public class PlayerMover : MonoBehaviour
 
         currentHealth -= damage;
         damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
+        NotifyHealthChanged();
         if (currentHealth <= 0)
         {
             Destroy(gameObject);
@@ -356,5 +361,10 @@ public class PlayerMover : MonoBehaviour
     private void NotifyCurrentWeaponChanged()
     {
         CurrentWeaponChanged?.Invoke(CurrentWeapon);
+    }
+
+    private void NotifyHealthChanged()
+    {
+        HealthChanged?.Invoke(currentHealth, maxHealth);
     }
 }
