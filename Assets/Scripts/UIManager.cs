@@ -1,10 +1,13 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
     [SerializeField] private GameObject popupCardPrefab;
+    [SerializeField] private WeaponPanel currentWeaponPanel;
 
     private GameObject activePopupCard;
 
@@ -19,6 +22,11 @@ public class UIManager : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        PlayerMover.CurrentWeaponChanged += HandleCurrentWeaponChanged;
     }
 
     public void ShowPopupCard()
@@ -47,9 +55,16 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        PlayerMover.CurrentWeaponChanged -= HandleCurrentWeaponChanged;
+
         if (Instance == this)
         {
             Instance = null;
         }
+    }
+
+    private void HandleCurrentWeaponChanged(WeaponData weapon)
+    {
+        currentWeaponPanel.Init(weapon);
     }
 }

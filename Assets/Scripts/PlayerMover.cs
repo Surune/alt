@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 public class PlayerMover : MonoBehaviour
 {
+    public static event Action<WeaponData> CurrentWeaponChanged;
+
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
@@ -49,6 +53,7 @@ public class PlayerMover : MonoBehaviour
 
         ownedWeapons.Add(startWeapon);
         currentAmmo = CurrentWeapon.MagazineSize;
+        NotifyCurrentWeaponChanged();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
     }
@@ -253,6 +258,7 @@ public class PlayerMover : MonoBehaviour
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
+        NotifyCurrentWeaponChanged();
 
         Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
     }
@@ -339,7 +345,13 @@ public class PlayerMover : MonoBehaviour
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
+        NotifyCurrentWeaponChanged();
 
         Debug.Log($"Weapon acquired: {CurrentWeapon.DisplayName}");
+    }
+
+    private void NotifyCurrentWeaponChanged()
+    {
+        CurrentWeaponChanged?.Invoke(CurrentWeapon);
     }
 }
