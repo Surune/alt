@@ -57,7 +57,7 @@ public class PlayerMover : MonoBehaviour
             StartReload();
         }
 
-        if (!IsReloading && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (!IsRolling && !IsReloading && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
         {
             Shoot();
         }
