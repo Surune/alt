@@ -25,6 +25,16 @@ public class UIManager : MonoBehaviour
     {
         activePopupCard = Instantiate(popupCardPrefab);
         activePopupCard.transform.localScale = Vector3.one;
+
+        var popupCardUi = activePopupCard.GetComponent<PopupCardUI>();
+        if (!popupCardUi.Initialize())
+        {
+            Destroy(activePopupCard);
+            activePopupCard = null;
+            ExperienceManager.Instance.HandlePopupCardClosed();
+            return;
+        }
+
         GameStateManager.Instance.EnterCardPopupState();
     }
 

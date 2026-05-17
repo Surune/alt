@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8194090906311653063}
   - component: {fileID: 5782312821289329050}
   m_Layer: 0
-  m_Name: CardName (1)
+  m_Name: CardDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -345,6 +345,9 @@ MonoBehaviour:
   rotateAmount: 20
   smooth: 12
   foilOpacity: 0.8
+  icon: {fileID: 8494329175714506718}
+  cardName: {fileID: 7579499860559627708}
+  cardDescription: {fileID: 5782312821289329050}
 --- !u!1 &5198630595766165036
 GameObject:
   m_ObjectHideFlags: 0

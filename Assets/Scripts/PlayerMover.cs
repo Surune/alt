@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,13 +9,13 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private InputActionReference rollAction;
-    [SerializeField] private WeaponData weaponData;
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rollSpeed = 8f;
     [SerializeField] private float rollDuration = 0.3f;
 
+    private readonly List<WeaponData> ownedWeapons = new();
     private Vector2 moveInput;
     private Vector3 rollDirection;
     private Quaternion rollBaseRotation;
@@ -31,12 +32,25 @@ public class PlayerMover : MonoBehaviour
     public bool IsRolling => Time.time < rollEndTime;
     public bool IsInvincible => IsRolling;
     private bool IsReloading => Time.time < reloadEndTime;
+    private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
+    private int currentWeaponIndex;
 
     private void Awake()
     {
         cam = Camera.main;
         currentHealth = maxHealth;
-        currentAmmo = weaponData.MagazineSize;
+    }
+    
+    private void Start()
+    {
+        var weapons = WeaponCatalog.Instance.Weapons;
+        var randomIndex = Random.Range(0, weapons.Length);
+        var startWeapon = weapons[randomIndex];
+
+        ownedWeapons.Add(startWeapon);
+        currentAmmo = CurrentWeapon.MagazineSize;
+
+        Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
     }
 
     private void Update()
@@ -48,6 +62,7 @@ public class PlayerMover : MonoBehaviour
         }
 
         moveInput = moveAction.action.ReadValue<Vector2>();
+        HandleWeaponScroll();
 
         if (!IsReloading && currentAmmo <= 0)
         {
@@ -137,9 +152,9 @@ public class PlayerMover : MonoBehaviour
 
     private void StartAttack()
     {
-        queuedBurstShots = weaponData.BurstCount;
+        queuedBurstShots = CurrentWeapon.BurstCount;
         FireBurstShot();
-        nextShotTime = Time.time + weaponData.FireInterval;
+        nextShotTime = Time.time + CurrentWeapon.FireInterval;
     }
 
     private void FireBurstShot()
@@ -158,31 +173,31 @@ public class PlayerMover : MonoBehaviour
 
         if (queuedBurstShots > 0)
         {
-            nextBurstShotTime = Time.time + weaponData.BurstInterval;
+            nextBurstShotTime = Time.time + CurrentWeapon.BurstInterval;
         }
     }
 
     private void StartReload()
     {
-        reloadEndTime = Time.time + weaponData.ReloadDuration;
-        currentAmmo = weaponData.MagazineSize;
+        reloadEndTime = Time.time + CurrentWeapon.ReloadDuration;
+        currentAmmo = CurrentWeapon.MagazineSize;
         nextShotTime = reloadEndTime;
         queuedBurstShots = 0;
-        Debug.Log("Reload started");
+        Debug.Log($"Reload started: {CurrentWeapon.DisplayName}");
     }
 
     private void FireShotPattern(Vector3 aimDirection)
     {
-        if (weaponData.ProjectilesPerShot == 1)
+        if (CurrentWeapon.ProjectilesPerShot == 1)
         {
             SpawnProjectile(aimDirection);
             return;
         }
 
-        var halfSpread = weaponData.SpreadAngle * 0.5f;
-        var step = weaponData.SpreadAngle / (weaponData.ProjectilesPerShot - 1);
+        var halfSpread = CurrentWeapon.SpreadAngle * 0.5f;
+        var step = CurrentWeapon.SpreadAngle / (CurrentWeapon.ProjectilesPerShot - 1);
 
-        for (var i = 0; i < weaponData.ProjectilesPerShot; i++)
+        for (var i = 0; i < CurrentWeapon.ProjectilesPerShot; i++)
         {
             var angle = -halfSpread + (step * i);
             var shotDirection = Quaternion.AngleAxis(angle, Vector3.up) * aimDirection;
@@ -192,13 +207,54 @@ public class PlayerMover : MonoBehaviour
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shotInstance = Instantiate(weaponData.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(
             shotDirection.normalized,
-            weaponData.ProjectileSpeed,
-            weaponData.ProjectileRange,
-            weaponData.Damage
+            CurrentWeapon.ProjectileSpeed,
+            CurrentWeapon.ProjectileRange,
+            CurrentWeapon.Damage
         );
+    }
+
+    private void HandleWeaponScroll()
+    {
+        if (ownedWeapons.Count < 2)
+        {
+            return;
+        }
+
+        var scrollValue = Mouse.current.scroll.ReadValue().y;
+        if (scrollValue > 0f)
+        {
+            SwitchWeapon(1);
+            return;
+        }
+
+        if (scrollValue < 0f)
+        {
+            SwitchWeapon(-1);
+        }
+    }
+
+    private void SwitchWeapon(int direction)
+    {
+        currentWeaponIndex += direction;
+        if (currentWeaponIndex >= ownedWeapons.Count)
+        {
+            currentWeaponIndex = 0;
+        }
+        else if (currentWeaponIndex < 0)
+        {
+            currentWeaponIndex = ownedWeapons.Count - 1;
+        }
+
+        currentAmmo = CurrentWeapon.MagazineSize;
+        reloadEndTime = 0f;
+        queuedBurstShots = 0;
+        nextBurstShotTime = 0f;
+        nextShotTime = Time.time;
+
+        Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
     }
 
     private void UseFearShot()
@@ -255,5 +311,35 @@ public class PlayerMover : MonoBehaviour
     public void AddExperience(int amount)
     {
         ExperienceManager.Instance.AddExperience(amount);
+    }
+
+    public WeaponData[] GetUnownedWeapons()
+    {
+        var catalogWeapons = WeaponCatalog.Instance.Weapons;
+        var unownedWeapons = new List<WeaponData>();
+
+        for (var i = 0; i < catalogWeapons.Length; i++)
+        {
+            var weapon = catalogWeapons[i];
+            if (!ownedWeapons.Contains(weapon))
+            {
+                unownedWeapons.Add(weapon);
+            }
+        }
+
+        return unownedWeapons.ToArray();
+    }
+
+    public void AcquireWeapon(WeaponData newWeapon)
+    {
+        ownedWeapons.Add(newWeapon);
+        currentWeaponIndex = ownedWeapons.Count - 1;
+        currentAmmo = CurrentWeapon.MagazineSize;
+        reloadEndTime = 0f;
+        queuedBurstShots = 0;
+        nextBurstShotTime = 0f;
+        nextShotTime = Time.time;
+
+        Debug.Log($"Weapon acquired: {CurrentWeapon.DisplayName}");
     }
 }
