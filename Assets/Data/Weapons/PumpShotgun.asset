@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0cb5c4fbc2141278ebd4a94010e12aa, type: 3}
+  m_Name: PumpShotgun
+  m_EditorClassIdentifier: 
+  WeaponId: pump_shotgun
+  DisplayName: Pump Shotgun
+  Description: Close-range burst that saturates a cone with heavy pellets.
+  Category: 2
+  Icon: {fileID: 21300000, guid: d2b3e51116fcf4454a45c37c73473a61, type: 3}
+  ProjectilePrefab: {fileID: 4452706447385332178, guid: 4ce47ab5ca1328e46853a760d2a484e0, type: 3}
+  Damage: 1
+  ProjectilesPerShot: 8
+  BurstCount: 1
+  SpreadAngle: 24
+  FireInterval: 0.75
+  BurstInterval: 0.05
+  ProjectileSpeed: 12
+  ProjectileRange: 7
+  MagazineSize: 5
+  ReloadDuration: 1.9

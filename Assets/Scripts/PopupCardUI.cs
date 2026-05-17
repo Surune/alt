@@ -3,7 +3,7 @@ using UnityEngine;
 public class PopupCardUI : MonoBehaviour
 {
     [SerializeField] private Transform cardRoot;
-    [SerializeField] private HologramCardUI cardPrefab;
+    [SerializeField] private Card cardPrefab;
     
     private void Awake()
     {

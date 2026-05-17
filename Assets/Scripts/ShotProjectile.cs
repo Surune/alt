@@ -11,12 +11,13 @@ public class ShotProjectile : MonoBehaviour
     private float speed;
     private float maxDistance;
 
-    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange)
+    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, int shotDamage)
     {
         direction = shotDirection;
         startPosition = rb.position;
         speed = shotSpeed;
         maxDistance = shotRange;
+        damage = shotDamage;
         rb.linearVelocity = direction * speed;
     }
 

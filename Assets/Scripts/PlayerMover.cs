@@ -8,17 +8,12 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private InputActionReference rollAction;
-    [SerializeField] private ShotProjectile shotPrefab;
+    [SerializeField] private WeaponData weaponData;
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rollSpeed = 8f;
     [SerializeField] private float rollDuration = 0.3f;
-    [SerializeField] private float shotSpeed = 12f;
-    [SerializeField] private float shotRange = 10f;
-    [SerializeField] private float shotInterval = 0.15f;
-    [SerializeField] private int magazineSize = 6;
-    [SerializeField] private float reloadDuration = 1.5f;
 
     private Vector2 moveInput;
     private Vector3 rollDirection;
@@ -30,6 +25,8 @@ public class PlayerMover : MonoBehaviour
     private Camera cam;
     private float nextShotTime;
     private float reloadEndTime;
+    private float nextBurstShotTime;
+    private int queuedBurstShots;
 
     public bool IsRolling => Time.time < rollEndTime;
     public bool IsInvincible => IsRolling;
@@ -39,7 +36,7 @@ public class PlayerMover : MonoBehaviour
     {
         cam = Camera.main;
         currentHealth = maxHealth;
-        currentAmmo = magazineSize;
+        currentAmmo = weaponData.MagazineSize;
     }
 
     private void Update()
@@ -57,9 +54,14 @@ public class PlayerMover : MonoBehaviour
             StartReload();
         }
 
-        if (!IsRolling && !IsReloading && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (!IsRolling && !IsReloading && queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
         {
-            Shoot();
+            FireBurstShot();
+        }
+
+        if (!IsRolling && !IsReloading && queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        {
+            StartAttack();
         }
 
         if (fearShotAction.action.WasPressedThisFrame())
@@ -133,25 +135,70 @@ public class PlayerMover : MonoBehaviour
         rollEndTime = Time.time + rollDuration;
     }
 
-    private void Shoot()
+    private void StartAttack()
     {
-        var shotInstance = Instantiate(shotPrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(GetAimDirection(), shotSpeed, shotRange);
+        queuedBurstShots = weaponData.BurstCount;
+        FireBurstShot();
+        nextShotTime = Time.time + weaponData.FireInterval;
+    }
+
+    private void FireBurstShot()
+    {
+        var aimDirection = GetAimDirection();
+        FireShotPattern(aimDirection);
         currentAmmo--;
-        nextShotTime = Time.time + shotInterval;
+        queuedBurstShots--;
 
         if (currentAmmo <= 0)
         {
+            queuedBurstShots = 0;
             StartReload();
+            return;
+        }
+
+        if (queuedBurstShots > 0)
+        {
+            nextBurstShotTime = Time.time + weaponData.BurstInterval;
         }
     }
 
     private void StartReload()
     {
-        reloadEndTime = Time.time + reloadDuration;
-        currentAmmo = magazineSize;
+        reloadEndTime = Time.time + weaponData.ReloadDuration;
+        currentAmmo = weaponData.MagazineSize;
         nextShotTime = reloadEndTime;
+        queuedBurstShots = 0;
         Debug.Log("Reload started");
+    }
+
+    private void FireShotPattern(Vector3 aimDirection)
+    {
+        if (weaponData.ProjectilesPerShot == 1)
+        {
+            SpawnProjectile(aimDirection);
+            return;
+        }
+
+        var halfSpread = weaponData.SpreadAngle * 0.5f;
+        var step = weaponData.SpreadAngle / (weaponData.ProjectilesPerShot - 1);
+
+        for (var i = 0; i < weaponData.ProjectilesPerShot; i++)
+        {
+            var angle = -halfSpread + (step * i);
+            var shotDirection = Quaternion.AngleAxis(angle, Vector3.up) * aimDirection;
+            SpawnProjectile(shotDirection);
+        }
+    }
+
+    private void SpawnProjectile(Vector3 shotDirection)
+    {
+        var shotInstance = Instantiate(weaponData.ProjectilePrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(
+            shotDirection.normalized,
+            weaponData.ProjectileSpeed,
+            weaponData.ProjectileRange,
+            weaponData.Damage
+        );
     }
 
     private void UseFearShot()

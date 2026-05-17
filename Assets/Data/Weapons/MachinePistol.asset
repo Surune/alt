@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0cb5c4fbc2141278ebd4a94010e12aa, type: 3}
+  m_Name: MachinePistol
+  m_EditorClassIdentifier: 
+  WeaponId: machine_pistol
+  DisplayName: Viper Machine Pistol
+  Description: Compact automatic sidearm that trades range for volume of fire.
+  Category: 1
+  Icon: {fileID: 21300000, guid: 61b8ff0b8ec04439f900957655c3034d, type: 3}
+  ProjectilePrefab: {fileID: 4452706447385332178, guid: 4ce47ab5ca1328e46853a760d2a484e0, type: 3}
+  Damage: 1
+  ProjectilesPerShot: 1
+  BurstCount: 1
+  SpreadAngle: 0
+  FireInterval: 0.08
+  BurstInterval: 0.05
+  ProjectileSpeed: 14
+  ProjectileRange: 10
+  MagazineSize: 20
+  ReloadDuration: 1.4

@@ -1,9 +1,10 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHandler, IPointerExitHandler
+public class Card : MonoBehaviour, IPointerMoveHandler, IPointerDownHandler, IPointerExitHandler
 {
     [Header("Target")]
     [SerializeField] private RectTransform cardRoot;
@@ -15,6 +16,11 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
 
     [Header("Foil")]
     [SerializeField] private float foilOpacity = 0.8f;
+
+    [Header("Data")] 
+    [SerializeField] private Image icon;
+    [SerializeField] private TMP_Text cardName;
+    [SerializeField] private TMP_Text cardDescription;
 
     private Action clickAction;
     private Material foilMat;
@@ -28,6 +34,13 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
         foilOverlay.material = foilMat;
     }
 
+    public void Init(WeaponData data)
+    {
+        icon.sprite = data.Icon;
+        cardName.text = data.DisplayName;
+        cardDescription.text = data.Description;
+    }
+
     private void Update()
     {
         cardRoot.localRotation = Quaternion.Lerp(cardRoot.localRotation, targetRotation, Time.unscaledDeltaTime * smooth);
@@ -39,10 +52,10 @@ public class HologramCardUI : MonoBehaviour, IPointerMoveHandler, IPointerDownHa
             cardRoot,
             eventData.position,
             eventData.pressEventCamera,
-            out Vector2 localPoint
+            out var localPoint
         );
 
-        Vector2 size = cardRoot.rect.size;
+        var size = cardRoot.rect.size;
 
         var nx = Mathf.Clamp(localPoint.x / (size.x * 0.5f), -1f, 1f);
         var ny = Mathf.Clamp(localPoint.y / (size.y * 0.5f), -1f, 1f);
