@@ -18,6 +18,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rollSpeed = 8f;
     [SerializeField] private float rollDuration = 0.3f;
+    [SerializeField] private float damageInvincibilityDuration = 0.5f;
 
     private readonly List<WeaponData> ownedWeapons = new();
     private Vector2 moveInput;
@@ -31,10 +32,11 @@ public class PlayerMover : MonoBehaviour
     private float nextShotTime;
     private float reloadEndTime;
     private float nextBurstShotTime;
+    private float damageInvincibilityEndTime;
     private int queuedBurstShots;
 
     public bool IsRolling => Time.time < rollEndTime;
-    public bool IsInvincible => IsRolling;
+    public bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
     private bool IsReloading => Time.time < reloadEndTime;
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
     private int currentWeaponIndex;
@@ -308,6 +310,7 @@ public class PlayerMover : MonoBehaviour
         }
 
         currentHealth -= damage;
+        damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
         if (currentHealth <= 0)
         {
             Destroy(gameObject);
