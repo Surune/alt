@@ -27,6 +27,8 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         PlayerMover.CurrentWeaponChanged += HandleCurrentWeaponChanged;
+        PlayerMover.CurrentAmmoChanged += HandleCurrentAmmoChanged;
+        PlayerMover.ReloadStateChanged += HandleReloadStateChanged;
     }
 
     public void ShowPopupCard()
@@ -56,6 +58,8 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         PlayerMover.CurrentWeaponChanged -= HandleCurrentWeaponChanged;
+        PlayerMover.CurrentAmmoChanged -= HandleCurrentAmmoChanged;
+        PlayerMover.ReloadStateChanged -= HandleReloadStateChanged;
 
         if (Instance == this)
         {
@@ -66,5 +70,15 @@ public class UIManager : MonoBehaviour
     private void HandleCurrentWeaponChanged(WeaponData weapon)
     {
         currentWeaponPanel.Init(weapon);
+    }
+
+    private void HandleCurrentAmmoChanged(int currentAmmo, int totalAmmo)
+    {
+        currentWeaponPanel.SetMagazine(currentAmmo, totalAmmo);
+    }
+
+    private void HandleReloadStateChanged(bool isReloading)
+    {
+        currentWeaponPanel.SetReloading(isReloading);
     }
 }

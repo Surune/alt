@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 public class PlayerMover : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
+    public static event Action<int, int> CurrentAmmoChanged;
+    public static event Action<bool> ReloadStateChanged;
     public static event Action<int, int> HealthChanged;
 
     [SerializeField] private Rigidbody rb;
@@ -43,6 +45,7 @@ public class PlayerMover : MonoBehaviour
     private bool IsReloading => Time.time < reloadEndTime;
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
     private int currentWeaponIndex;
+    private bool reloadState;
 
     private void Awake()
     {
@@ -60,12 +63,18 @@ public class PlayerMover : MonoBehaviour
         ownedWeapons.Add(startWeapon);
         currentAmmo = CurrentWeapon.MagazineSize;
         NotifyCurrentWeaponChanged();
+        NotifyCurrentAmmoChanged();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
     }
 
     private void Update()
     {
+        if (reloadState && !IsReloading)
+        {
+            CompleteReload();
+        }
+
         if (!GameStateManager.Instance.IsGameplayActive)
         {
             moveInput = Vector2.zero;
@@ -174,6 +183,7 @@ public class PlayerMover : MonoBehaviour
         FireShotPattern(aimDirection);
         currentAmmo--;
         queuedBurstShots--;
+        NotifyCurrentAmmoChanged();
 
         if (currentAmmo <= 0)
         {
@@ -191,10 +201,21 @@ public class PlayerMover : MonoBehaviour
     private void StartReload()
     {
         reloadEndTime = Time.time + CurrentWeapon.ReloadDuration;
-        currentAmmo = CurrentWeapon.MagazineSize;
+        currentAmmo = 0;
         nextShotTime = reloadEndTime;
         queuedBurstShots = 0;
+        reloadState = true;
+        NotifyCurrentAmmoChanged();
+        NotifyReloadStateChanged();
         Debug.Log($"Reload started: {CurrentWeapon.DisplayName}");
+    }
+
+    private void CompleteReload()
+    {
+        currentAmmo = CurrentWeapon.MagazineSize;
+        reloadState = false;
+        NotifyCurrentAmmoChanged();
+        NotifyReloadStateChanged();
     }
 
     private void FireShotPattern(Vector3 aimDirection)
@@ -264,7 +285,10 @@ public class PlayerMover : MonoBehaviour
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
+        reloadState = false;
         NotifyCurrentWeaponChanged();
+        NotifyCurrentAmmoChanged();
+        NotifyReloadStateChanged();
 
         Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
     }
@@ -353,7 +377,10 @@ public class PlayerMover : MonoBehaviour
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
+        reloadState = false;
         NotifyCurrentWeaponChanged();
+        NotifyCurrentAmmoChanged();
+        NotifyReloadStateChanged();
 
         Debug.Log($"Weapon acquired: {CurrentWeapon.DisplayName}");
     }
@@ -361,6 +388,16 @@ public class PlayerMover : MonoBehaviour
     private void NotifyCurrentWeaponChanged()
     {
         CurrentWeaponChanged?.Invoke(CurrentWeapon);
+    }
+
+    private void NotifyCurrentAmmoChanged()
+    {
+        CurrentAmmoChanged?.Invoke(currentAmmo, CurrentWeapon.MagazineSize);
+    }
+
+    private void NotifyReloadStateChanged()
+    {
+        ReloadStateChanged?.Invoke(reloadState);
     }
 
     private void NotifyHealthChanged()
