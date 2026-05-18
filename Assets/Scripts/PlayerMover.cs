@@ -346,9 +346,15 @@ public class PlayerMover : MonoBehaviour
         }
     }
 
-    public void AddExperience(int amount)
+    public void Heal(int amount)
     {
-        ExperienceManager.Instance.AddExperience(amount);
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+
+        NotifyHealthChanged();
     }
 
     public WeaponData[] GetUnownedWeapons()

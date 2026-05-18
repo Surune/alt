@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private EnemyProjectile shotPrefab;
     [SerializeField] private int maxHealth = 3;
-    [SerializeField] private ExperiencePickup experiencePickupPrefab;
+    [SerializeField] private BloodPickup bloodPickupPrefab;
     [SerializeField] private float awarenessRange = 12f;
     [SerializeField] private float preferredDistance = 6f;
     [SerializeField] private float distanceSlack = 1.5f;
@@ -288,14 +288,20 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        var droppedExperience = Mathf.Min(damage, currentHealth);
-        var exp = Instantiate(experiencePickupPrefab, transform.position, Quaternion.identity);
-        exp.Init(droppedExperience);
+        SpawnBloodPickup();
         
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
             Destroy(gameObject);
         }
+    }
+
+    private void SpawnBloodPickup()
+    {
+        var bloodPosition = transform.position;
+        bloodPosition.y = 0.02f;
+        var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation);
     }
 }

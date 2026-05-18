@@ -121,7 +121,7 @@ MonoBehaviour:
   agent: {fileID: 3872146506243029011}
   shotPrefab: {fileID: 4452706447385332178, guid: 838cdf2e2b9345ac97d7481101819c5f, type: 3}
   maxHealth: 40
-  experiencePickupPrefab: {fileID: 5717418940973757742, guid: 9d43aec0d42f45329dc7ccb645fc5d1d, type: 3}
+  bloodPickupPrefab: {fileID: 4277246807266260747, guid: f63227d5a47d44628f91c57710fc8ae0, type: 3}
   awarenessRange: 16
   preferredDistance: 7
   distanceSlack: 1.75

@@ -41,7 +41,6 @@ public class UIManager : MonoBehaviour
         {
             Destroy(activePopupCard);
             activePopupCard = null;
-            ExperienceManager.Instance.HandlePopupCardClosed();
             return;
         }
 
@@ -52,7 +51,6 @@ public class UIManager : MonoBehaviour
     {
         Destroy(activePopupCard);
         activePopupCard = null;
-        ExperienceManager.Instance.HandlePopupCardClosed();
     }
 
     private void OnDestroy()

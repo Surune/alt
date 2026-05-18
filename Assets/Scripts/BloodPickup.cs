@@ -1,0 +1,78 @@
+using UnityEngine;
+
+public class BloodPickup : MonoBehaviour
+{
+    private static readonly System.Collections.Generic.List<BloodPickup> ActivePickups = new();
+
+    [SerializeField] private int healAmount = 1;
+    [SerializeField] private float mergeDistance = 0.28f;
+    [SerializeField] private float scaleGrowth = 0.12f;
+    [SerializeField] private float maxScale = 2.4f;
+    [SerializeField] private float floatAmplitude = 0.1f;
+    [SerializeField] private float floatFrequency = 2f;
+
+    private float baseY;
+    private float floatOffset;
+
+    public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation)
+    {
+        for (var i = 0; i < ActivePickups.Count; i++)
+        {
+            var activePickup = ActivePickups[i];
+            var offset = activePickup.transform.position - position;
+            offset.y = 0f;
+            if (offset.sqrMagnitude > activePickup.mergeDistance * activePickup.mergeDistance)
+            {
+                continue;
+            }
+
+            activePickup.Grow();
+            return;
+        }
+
+        Instantiate(prefab, position, rotation);
+    }
+
+    private void Awake()
+    {
+        baseY = transform.position.y;
+        floatOffset = Random.Range(0f, Mathf.PI * 2f);
+        ActivePickups.Add(this);
+    }
+
+    private void OnDestroy()
+    {
+        ActivePickups.Remove(this);
+    }
+
+    private void Update()
+    {
+        var position = transform.position;
+        position.y = baseY + ((Mathf.Sin(Time.time * floatFrequency + floatOffset) * 0.5f + 0.5f) * floatAmplitude);
+        transform.position = position;
+    }
+
+    private void Grow()
+    {
+        var nextScale = transform.localScale.x + scaleGrowth;
+        if (nextScale > maxScale)
+        {
+            nextScale = maxScale;
+        }
+
+        transform.localScale = Vector3.one * nextScale;
+        healAmount++;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        var player = other.GetComponent<PlayerMover>();
+        if (player == null)
+        {
+            return;
+        }
+
+        player.Heal(healAmount);
+        Destroy(gameObject);
+    }
+}
