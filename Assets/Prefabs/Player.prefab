@@ -100,11 +100,12 @@ MonoBehaviour:
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   fearShotAction: {fileID: -3356157255947718216, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   rollAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  maxHealth: 3
+  maxHealth: 20
   fearShotCount: 1
   moveSpeed: 5
   rollSpeed: 5
   rollDuration: 0.3
+  damageInvincibilityDuration: 0.5
 --- !u!1001 &7596266864359351710
 PrefabInstance:
   m_ObjectHideFlags: 0

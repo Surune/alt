@@ -128,9 +128,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   icon: {fileID: 3397859264166911572}
-  reloadingSprite: {fileID: 21300000, guid: beccece44912037439787c54526f8288, type: 3}
   displayName: {fileID: 8762572823729031429}
-  magazine: {fileID: 1267936778748991973}
+  attackCost: {fileID: 1267936778748991973}
 --- !u!1 &4738567169381634612
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100/100
+  m_text: HP -1 / ATK
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

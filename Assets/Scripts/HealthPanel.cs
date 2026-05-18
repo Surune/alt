@@ -1,12 +1,11 @@
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthPanel : MonoBehaviour
 {
-    [SerializeField] private RectTransform heartContainer;
-    [SerializeField] private Heart heartPrefab;
-
-    private readonly List<Heart> hearts = new();
+    [SerializeField] private Slider gauge;
+    [SerializeField] private TMP_Text healthText;
 
     private void OnEnable()
     {
@@ -26,26 +25,7 @@ public class HealthPanel : MonoBehaviour
 
     private void HandleHealthChanged(int currentHealth, int maxHealth)
     {
-        SyncHeartCount(maxHealth);
-
-        for (var i = 0; i < hearts.Count; i++)
-        {
-            if (i < currentHealth)
-            {
-                hearts[i].Activate();
-                continue;
-            }
-
-            hearts[i].Deactivate();
-        }
-    }
-
-    private void SyncHeartCount(int maxHealth)
-    {
-        for (var i = hearts.Count; i < maxHealth; i++)
-        {
-            var heart = Instantiate(heartPrefab, heartContainer); 
-            hearts.Add(heart);
-        }
+        gauge.value = (float)currentHealth / maxHealth;
+        healthText.text = $"{currentHealth}/{maxHealth}";
     }
 }

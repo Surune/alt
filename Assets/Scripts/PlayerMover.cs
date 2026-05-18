@@ -7,8 +7,6 @@ using Random = UnityEngine.Random;
 public class PlayerMover : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
-    public static event Action<int, int> CurrentAmmoChanged;
-    public static event Action<bool> ReloadStateChanged;
     public static event Action<int, int> HealthChanged;
 
     [SerializeField] private Rigidbody rb;
@@ -16,7 +14,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private InputActionReference rollAction;
-    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int maxHealth = 20;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rollSpeed = 8f;
@@ -30,10 +28,8 @@ public class PlayerMover : MonoBehaviour
     private float rollStartTime;
     private float rollEndTime;
     private int currentHealth;
-    private int currentAmmo;
     private Camera cam;
     private float nextShotTime;
-    private float reloadEndTime;
     private float nextBurstShotTime;
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
@@ -42,10 +38,8 @@ public class PlayerMover : MonoBehaviour
     public bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
-    private bool IsReloading => Time.time < reloadEndTime;
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
     private int currentWeaponIndex;
-    private bool reloadState;
 
     private void Awake()
     {
@@ -61,20 +55,13 @@ public class PlayerMover : MonoBehaviour
         var startWeapon = weapons[randomIndex];
 
         ownedWeapons.Add(startWeapon);
-        currentAmmo = CurrentWeapon.MagazineSize;
         NotifyCurrentWeaponChanged();
-        NotifyCurrentAmmoChanged();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
     }
 
     private void Update()
     {
-        if (reloadState && !IsReloading)
-        {
-            CompleteReload();
-        }
-
         if (!GameStateManager.Instance.IsGameplayActive)
         {
             moveInput = Vector2.zero;
@@ -84,17 +71,12 @@ public class PlayerMover : MonoBehaviour
         moveInput = moveAction.action.ReadValue<Vector2>();
         HandleWeaponScroll();
 
-        if (!IsReloading && currentAmmo <= 0)
-        {
-            StartReload();
-        }
-
-        if (!IsRolling && !IsReloading && queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
+        if (!IsRolling && queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
         {
             FireBurstShot();
         }
 
-        if (!IsRolling && !IsReloading && queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (!IsRolling && queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
         {
             StartAttack();
         }
@@ -172,6 +154,11 @@ public class PlayerMover : MonoBehaviour
 
     private void StartAttack()
     {
+        if (currentHealth < CurrentWeapon.ProjectilesPerShot)
+        {
+            return;
+        }
+
         queuedBurstShots = CurrentWeapon.BurstCount;
         FireBurstShot();
         nextShotTime = Time.time + CurrentWeapon.FireInterval;
@@ -179,16 +166,22 @@ public class PlayerMover : MonoBehaviour
 
     private void FireBurstShot()
     {
-        var aimDirection = GetAimDirection();
-        FireShotPattern(aimDirection);
-        currentAmmo--;
-        queuedBurstShots--;
-        NotifyCurrentAmmoChanged();
-
-        if (currentAmmo <= 0)
+        if (currentHealth < CurrentWeapon.ProjectilesPerShot)
         {
             queuedBurstShots = 0;
-            StartReload();
+            return;
+        }
+
+        var aimDirection = GetAimDirection();
+        FireShotPattern(aimDirection);
+        currentHealth -= CurrentWeapon.ProjectilesPerShot;
+        queuedBurstShots--;
+        NotifyHealthChanged();
+
+        if (currentHealth <= 0)
+        {
+            queuedBurstShots = 0;
+            Destroy(gameObject);
             return;
         }
 
@@ -196,26 +189,6 @@ public class PlayerMover : MonoBehaviour
         {
             nextBurstShotTime = Time.time + CurrentWeapon.BurstInterval;
         }
-    }
-
-    private void StartReload()
-    {
-        reloadEndTime = Time.time + CurrentWeapon.ReloadDuration;
-        currentAmmo = 0;
-        nextShotTime = reloadEndTime;
-        queuedBurstShots = 0;
-        reloadState = true;
-        NotifyCurrentAmmoChanged();
-        NotifyReloadStateChanged();
-        Debug.Log($"Reload started: {CurrentWeapon.DisplayName}");
-    }
-
-    private void CompleteReload()
-    {
-        currentAmmo = CurrentWeapon.MagazineSize;
-        reloadState = false;
-        NotifyCurrentAmmoChanged();
-        NotifyReloadStateChanged();
     }
 
     private void FireShotPattern(Vector3 aimDirection)
@@ -280,15 +253,10 @@ public class PlayerMover : MonoBehaviour
             currentWeaponIndex = ownedWeapons.Count - 1;
         }
 
-        currentAmmo = CurrentWeapon.MagazineSize;
-        reloadEndTime = 0f;
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
-        reloadState = false;
         NotifyCurrentWeaponChanged();
-        NotifyCurrentAmmoChanged();
-        NotifyReloadStateChanged();
 
         Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
     }
@@ -378,15 +346,10 @@ public class PlayerMover : MonoBehaviour
     {
         ownedWeapons.Add(newWeapon);
         currentWeaponIndex = ownedWeapons.Count - 1;
-        currentAmmo = CurrentWeapon.MagazineSize;
-        reloadEndTime = 0f;
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
-        reloadState = false;
         NotifyCurrentWeaponChanged();
-        NotifyCurrentAmmoChanged();
-        NotifyReloadStateChanged();
 
         Debug.Log($"Weapon acquired: {CurrentWeapon.DisplayName}");
     }
@@ -394,16 +357,6 @@ public class PlayerMover : MonoBehaviour
     private void NotifyCurrentWeaponChanged()
     {
         CurrentWeaponChanged?.Invoke(CurrentWeapon);
-    }
-
-    private void NotifyCurrentAmmoChanged()
-    {
-        CurrentAmmoChanged?.Invoke(currentAmmo, CurrentWeapon.MagazineSize);
-    }
-
-    private void NotifyReloadStateChanged()
-    {
-        ReloadStateChanged?.Invoke(reloadState);
     }
 
     private void NotifyHealthChanged()
