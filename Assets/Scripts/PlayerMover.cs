@@ -19,6 +19,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rollSpeed = 8f;
     [SerializeField] private float rollDuration = 0.3f;
+    [SerializeField] private float rollCooldown = 0.5f;
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
 
     private readonly List<WeaponData> ownedWeapons = new();
@@ -27,6 +28,7 @@ public class PlayerMover : MonoBehaviour
     private Quaternion rollBaseRotation;
     private float rollStartTime;
     private float rollEndTime;
+    private float nextRollTime;
     private int currentHealth;
     private Camera cam;
     private float nextShotTime;
@@ -135,6 +137,11 @@ public class PlayerMover : MonoBehaviour
 
     private void StartRoll()
     {
+        if (Time.time < nextRollTime)
+        {
+            return;
+        }
+
         var moveDirection = GetMoveDirection();
         if (moveDirection.sqrMagnitude > 0f)
         {
@@ -142,14 +149,13 @@ public class PlayerMover : MonoBehaviour
         }
         else
         {
-            rollDirection = transform.forward;
-            rollDirection.y = 0f;
-            rollDirection.Normalize();
+            rollDirection = Vector3.zero;
         }
 
         rollBaseRotation = rb.rotation;
         rollStartTime = Time.time;
         rollEndTime = Time.time + rollDuration;
+        nextRollTime = Time.time + rollCooldown;
     }
 
     private void StartAttack()
