@@ -34,7 +34,7 @@ public class ShotProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        var enemy = collision.gameObject.GetComponent<Enemy>();
+        var enemy = collision.gameObject.GetComponent<Agent>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
