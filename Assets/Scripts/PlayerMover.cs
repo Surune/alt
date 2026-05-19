@@ -160,7 +160,7 @@ public class PlayerMover : MonoBehaviour
 
     private void StartAttack()
     {
-        if (currentHealth < CurrentWeapon.ProjectilesPerShot)
+        if (!CanFireCurrentWeapon())
         {
             return;
         }
@@ -172,7 +172,7 @@ public class PlayerMover : MonoBehaviour
 
     private void FireBurstShot()
     {
-        if (currentHealth < CurrentWeapon.ProjectilesPerShot)
+        if (!CanFireCurrentWeapon())
         {
             queuedBurstShots = 0;
             return;
@@ -195,6 +195,11 @@ public class PlayerMover : MonoBehaviour
         {
             nextBurstShotTime = Time.time + CurrentWeapon.BurstInterval;
         }
+    }
+
+    private bool CanFireCurrentWeapon()
+    {
+        return currentHealth > CurrentWeapon.ProjectilesPerShot;
     }
 
     private void FireShotPattern(Vector3 aimDirection)
