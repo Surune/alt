@@ -1,10 +1,12 @@
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ShotProjectile : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
     [SerializeField] private int damage = 1;
+    [SerializeField] private BloodPickup bloodPickupPrefab;
 
     private Vector3 direction;
     private Vector3 startPosition;
@@ -45,7 +47,16 @@ public class ShotProjectile : MonoBehaviour
         var collidedGameObject = collision.gameObject;
         if (collidedGameObject.CompareTag("Obstacle"))
         {
+            SpawnBloodPickup();
             Destroy(gameObject);
         }
+    }
+
+    private void SpawnBloodPickup()
+    {
+        var bloodPosition = transform.position;
+        bloodPosition.y = 0.02f;
+        var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation);
     }
 }
