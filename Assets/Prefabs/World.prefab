@@ -111,7 +111,28 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 758063c94d63d9d458bb6833343791db, type: 2}
   - {fileID: 11400000, guid: 507e070debdb63a46a0b086a7455fcdf, type: 2}
   roundStartDelay: 0.75
-  roundDuration: 15
+  defaultRoundDuration: 15
+  roundDurations:
+  - 20
+  - 25
+  - 30
+  - 35
+  - 40
+  - 45
+  - 50
+  - 55
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
+  - 60
   spawnInnerRadius: 3.5
   spawnOuterRadius: 4.75
 --- !u!1 &1436142876806154838

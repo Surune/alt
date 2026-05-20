@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
-    private const int RoundsPerStage = 7;
-
     [SerializeField] private EnemyData[] enemyCatalog;
     [SerializeField] private float roundStartDelay = 0.75f;
-    [SerializeField] private float roundDuration = 15f;
+    [SerializeField] private float[] roundDurations = { 15f };
     [SerializeField] private float spawnInnerRadius = 3.5f;
     [SerializeField] private float spawnOuterRadius = 4.75f;
 
-    private int currentStage = 1;
     private int currentRound = 1;
     private int aliveEnemyCount;
 
@@ -35,12 +32,16 @@ public class StageManager : MonoBehaviour
     {
         yield return new WaitForSeconds(roundStartDelay);
 
-        while (true)
+        var totalRounds = roundDurations.Length;
+
+        while (currentRound <= totalRounds)
         {
             StartRound();
             yield return WaitForRoundEnd();
             AdvanceRound();
         }
+
+        Debug.Log($"All {totalRounds} rounds completed.");
     }
 
     private void StartRound()
@@ -59,12 +60,13 @@ public class StageManager : MonoBehaviour
             aliveEnemyCount++;
         }
 
-        Debug.Log($"Stage {currentStage} Round {currentRound} started: {spawnCount} enemies / wave {wave}");
+        Debug.Log($"Round {currentRound} started: {spawnCount} enemies / wave {wave}");
     }
 
     private IEnumerator WaitForRoundEnd()
     {
         var elapsed = 0f;
+        var roundDuration = GetCurrentRoundDuration();
 
         while (elapsed < roundDuration)
         {
@@ -94,18 +96,16 @@ public class StageManager : MonoBehaviour
     private void AdvanceRound()
     {
         currentRound++;
-        if (currentRound <= RoundsPerStage)
-        {
-            return;
-        }
+    }
 
-        currentStage++;
-        currentRound = 1;
+    private float GetCurrentRoundDuration()
+    {
+        return roundDurations[currentRound - 1];
     }
 
     private int GetCurrentWave()
     {
-        return ((currentStage - 1) * RoundsPerStage) + currentRound;
+        return currentRound;
     }
 
     private List<EnemyData> GetAvailableEnemies(int wave)
