@@ -32,7 +32,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5213119301822678483}
+  - {fileID: 3209572427478753780}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3955425418833704279
@@ -98,7 +98,7 @@ MonoBehaviour:
   rb: {fileID: 3955425418833704279}
   shotCollider: {fileID: 328790651303532237}
   damage: 1
---- !u!1001 &5751660906801193528
+--- !u!1001 &3098485766443959839
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -106,33 +106,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6722744190829483954}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -7635826562936255635, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 7ab1b88beb894594aa323852fd3e8457, type: 2}
-    - target: {fileID: 919132149155446097, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
+    - target: {fileID: 919132149155446097, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
       propertyPath: m_Name
-      value: bullet
+      value: enemy_bullet
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
---- !u!4 &5213119301822678483 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
+--- !u!4 &3209572427478753780 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4b2d125c84a78484e938fbd2d697608a, type: 3}
-  m_PrefabInstance: {fileID: 5751660906801193528}
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 131c2e906d805fb4cbb135c63527eb62, type: 3}
+  m_PrefabInstance: {fileID: 3098485766443959839}
   m_PrefabAsset: {fileID: 0}
