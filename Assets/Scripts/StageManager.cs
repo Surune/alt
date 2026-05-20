@@ -1,11 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
     private const int RoundsPerStage = 7;
 
-    [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private EnemyData[] enemyCatalog;
     [SerializeField] private float roundStartDelay = 0.75f;
     [SerializeField] private float roundDuration = 15f;
     [SerializeField] private float spawnInnerRadius = 3.5f;
@@ -17,7 +18,7 @@ public class StageManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Agent.Died += HandleAgentDied;
+        Enemy.OnDeath += HandleAgentOnDeath;
     }
 
     private void Start()
@@ -27,7 +28,7 @@ public class StageManager : MonoBehaviour
 
     private void OnDisable()
     {
-        Agent.Died -= HandleAgentDied;
+        Enemy.OnDeath -= HandleAgentOnDeath;
     }
 
     private IEnumerator RunRounds()
@@ -44,19 +45,21 @@ public class StageManager : MonoBehaviour
 
     private void StartRound()
     {
+        var wave = GetCurrentWave();
         var roundSquare = currentRound * currentRound;
-        var maxHealth = currentStage + roundSquare;
         var spawnCount = roundSquare + 1;
+        var availableEnemies = GetAvailableEnemies(wave);
 
         for (var i = 0; i < spawnCount; i++)
         {
             var spawnPosition = GetSpawnPosition(i, spawnCount);
-            var enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            enemy.Initialize(maxHealth);
+            var enemyData = availableEnemies[(wave + i) % availableEnemies.Count];
+            var enemy = Instantiate(enemyData.Prefab, spawnPosition, Quaternion.identity);
+            enemy.Initialize(enemyData, wave);
             aliveEnemyCount++;
         }
 
-        Debug.Log($"Stage {currentStage} Round {currentRound} started: {spawnCount} enemies / {maxHealth} HP");
+        Debug.Log($"Stage {currentStage} Round {currentRound} started: {spawnCount} enemies / wave {wave}");
     }
 
     private IEnumerator WaitForRoundEnd()
@@ -100,9 +103,30 @@ public class StageManager : MonoBehaviour
         currentRound = 1;
     }
 
-    private void HandleAgentDied(Agent deadAgent)
+    private int GetCurrentWave()
     {
-        if (deadAgent is not Enemy)
+        return ((currentStage - 1) * RoundsPerStage) + currentRound;
+    }
+
+    private List<EnemyData> GetAvailableEnemies(int wave)
+    {
+        var availableEnemies = new List<EnemyData>();
+
+        for (var i = 0; i < enemyCatalog.Length; i++)
+        {
+            var enemyData = enemyCatalog[i];
+            if (enemyData.StartWave <= wave)
+            {
+                availableEnemies.Add(enemyData);
+            }
+        }
+
+        return availableEnemies;
+    }
+
+    private void HandleAgentOnDeath(Enemy deadEnemy)
+    {
+        if (deadEnemy is not Enemy_Baby)
         {
             return;
         }

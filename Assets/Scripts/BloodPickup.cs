@@ -14,7 +14,7 @@ public class BloodPickup : MonoBehaviour
     private float baseY;
     private float floatOffset;
 
-    public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation)
+    public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation, int amount)
     {
         for (var i = 0; i < ActivePickups.Count; i++)
         {
@@ -26,11 +26,12 @@ public class BloodPickup : MonoBehaviour
                 continue;
             }
 
-            activePickup.Grow();
+            activePickup.Grow(amount);
             return;
         }
 
-        Instantiate(prefab, position, rotation);
+        var pickup = Instantiate(prefab, position, rotation);
+        pickup.SetHealAmount(amount);
     }
 
     private void Awake()
@@ -52,7 +53,7 @@ public class BloodPickup : MonoBehaviour
         transform.position = position;
     }
 
-    private void Grow()
+    private void Grow(int amount)
     {
         var nextScale = transform.localScale.x + scaleGrowth;
         if (nextScale > maxScale)
@@ -61,7 +62,12 @@ public class BloodPickup : MonoBehaviour
         }
 
         transform.localScale = Vector3.one * nextScale;
-        healAmount++;
+        healAmount += amount;
+    }
+
+    private void SetHealAmount(int amount)
+    {
+        healAmount = amount;
     }
 
     private void OnTriggerEnter(Collider other)

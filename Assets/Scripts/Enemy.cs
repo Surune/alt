@@ -1,112 +1,61 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
-public class Enemy : Agent
+public class Enemy : MonoBehaviour
 {
-    [SerializeField] protected float awarenessRange = 12f;
-    [SerializeField] protected float preferredDistance = 6f;
-    [SerializeField] protected float distanceSlack = 1.5f;
-    [SerializeField] protected float retreatStep = 3f;
-    [SerializeField] protected float strafeDistance = 2f;
-    [SerializeField] protected float strafeFrequency = 1.5f;
-    [SerializeField] protected float turnSpeed = 720f;
-    [SerializeField] protected float repathInterval = 0.2f;
-    
-    protected Transform player;
-    protected float nextRepathTime;
+    public static event Action<Enemy> OnDeath;
 
+    [SerializeField] protected NavMeshAgent agent;
+    [SerializeField] private BloodPickup bloodPickupPrefab;
+
+    protected Transform player;
+    protected float maxHealth;
+    protected float currentHealth;
+    protected float contactDamage;
+    private int bloodDropAmount;
+
+    private void Reset()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+    
     private void Awake()
     {
         player = FindFirstObjectByType<PlayerMover>().transform;
-        currentHealth = maxHealth;
         agent.baseOffset = 0f;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
 
-    private void Update()
+    public void Initialize(EnemyData enemyData, int currentWave)
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
-        {
-            return;
-        }
-
-        UpdateFacing();
-        UpdateMovement();
+        var waveOffset = currentWave - enemyData.StartWave;
+        maxHealth = enemyData.MaxHealth + (enemyData.HealthIncreasePerWave * waveOffset);
+        currentHealth = maxHealth;
+        bloodDropAmount = enemyData.BloodDropAmount;
+        contactDamage = enemyData.Damage + (enemyData.DamageIncreasePerWave * waveOffset);
+        agent.speed = enemyData.MoveSpeed;
     }
 
-    private void UpdateFacing()
+    public void TakeDamage(int damage)
     {
-        var direction = player.position - transform.position;
-        direction.y = 0f;
+        currentHealth -= damage;
 
-        if (direction.sqrMagnitude <= 0.0001f)
+        if (!(currentHealth <= 0))
         {
             return;
         }
-
-        var targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        SpawnBloodPickup(bloodDropAmount);
+        OnDeath?.Invoke(this);
+        Destroy(gameObject);
     }
-
-    private void UpdateMovement()
+    
+    private void SpawnBloodPickup(int amount)
     {
-        if (Time.time < nextRepathTime || !agent.isOnNavMesh)
-        {
-            return;
-        }
-
-        nextRepathTime = Time.time + repathInterval;
-
-        var toPlayer = player.position - transform.position;
-        toPlayer.y = 0f;
-
-        var distance = toPlayer.magnitude;
-        if (distance > awarenessRange)
-        {
-            agent.ResetPath();
-            return;
-        }
-
-        if (distance <= 0.001f)
-        {
-            return;
-        }
-
-        toPlayer /= distance;
-
-        var awayFromPlayer = -toPlayer;
-        var strafeDirection = Vector3.Cross(Vector3.up, toPlayer);
-        if (Mathf.Sin(Time.time * strafeFrequency) < 0f)
-        {
-            strafeDirection = -strafeDirection;
-        }
-
-        var destination = transform.position;
-
-        if (distance < preferredDistance)
-        {
-            destination += awayFromPlayer * retreatStep;
-            destination += strafeDirection * strafeDistance;
-        }
-        else if (distance > preferredDistance + distanceSlack)
-        {
-            destination = player.position;
-            destination += awayFromPlayer * preferredDistance;
-            destination += strafeDirection * strafeDistance;
-        }
-        else
-        {
-            destination += awayFromPlayer * (distanceSlack * 0.5f);
-            destination += strafeDirection * strafeDistance;
-        }
-
-        var sampledPosition = destination;
-        if (NavMesh.SamplePosition(destination, out var hit, 4f, NavMesh.AllAreas))
-        {
-            sampledPosition = hit.position;
-        }
-
-        agent.SetDestination(sampledPosition);
+        var bloodPosition = transform.position;
+        var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation, amount);
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Boss : Agent
+public class Boss : Enemy
 {
     private enum BossPattern
     {
@@ -36,7 +36,6 @@ public class Boss : Agent
     [SerializeField] private float spiralSweepRotationPerStep = 24f;
     [SerializeField] private float spiralSweepStepInterval = 0.12f;
 
-    private Transform player;
     private float nextRepathTime;
     private float nextPatternTime;
     private float nextPatternStepTime;
@@ -45,15 +44,6 @@ public class Boss : Agent
     private int nextPatternIndex;
     private bool isPatternActive;
     private BossPattern activePattern;
-
-    private void Awake()
-    {
-        player = FindFirstObjectByType<PlayerMover>().transform;
-        nextPatternTime = Time.time + patternCooldown;
-        agent.baseOffset = 0f;
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-    }
 
     private void Update()
     {

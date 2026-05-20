@@ -36,7 +36,7 @@ public class ShotProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        var enemy = collision.gameObject.GetComponent<Agent>();
+        var enemy = collision.gameObject.GetComponent<Enemy>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
@@ -57,6 +57,6 @@ public class ShotProjectile : MonoBehaviour
         var bloodPosition = transform.position;
         bloodPosition.y = 0.02f;
         var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation);
+        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation, 1);
     }
 }

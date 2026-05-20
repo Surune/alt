@@ -36,11 +36,12 @@ public class PlayerMover : MonoBehaviour
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
 
-    public bool IsRolling => Time.time < rollEndTime;
-    public bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
+    
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
+    private bool IsRolling => Time.time < rollEndTime;
+    private bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
     private int currentWeaponIndex;
 
     private void Awake()
@@ -309,14 +310,14 @@ public class PlayerMover : MonoBehaviour
         return moveDirection;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (IsInvincible)
         {
             return;
         }
 
-        currentHealth -= damage;
+        currentHealth -= (int)damage;
         damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
         NotifyHealthChanged();
         if (currentHealth <= 0)
