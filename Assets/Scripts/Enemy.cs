@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     protected float maxHealth;
     protected float currentHealth;
     protected float contactDamage;
+    protected int currentWave;
     private int bloodDropAmount;
 
     private void Reset()
@@ -31,6 +32,7 @@ public class Enemy : MonoBehaviour
 
     public void Initialize(EnemyData enemyData, int currentWave)
     {
+        this.currentWave = currentWave;
         var waveOffset = currentWave - enemyData.StartWave;
         maxHealth = enemyData.MaxHealth + (enemyData.HealthIncreasePerWave * waveOffset);
         currentHealth = maxHealth;
@@ -50,6 +52,16 @@ public class Enemy : MonoBehaviour
         SpawnBloodPickup(bloodDropAmount);
         OnDeath?.Invoke(this);
         Destroy(gameObject);
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        currentHealth += amount;
+
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
     }
     
     private void SpawnBloodPickup(int amount)

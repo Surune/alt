@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Healer
   DisplayName: Healer
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 8063063194991537675, guid: 13f8a1e577f478c48ac7ef52f31b128d, type: 3}
   MaxHealth: 10
   HealthIncreasePerWave: 8
   Damage: 1
