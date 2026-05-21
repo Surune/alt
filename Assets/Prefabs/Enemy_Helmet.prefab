@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6613040455332606920}
   - component: {fileID: 626701337628292172}
   - component: {fileID: 3872146506243029011}
-  - component: {fileID: 6799485052876487813}
+  - component: {fileID: 5949418721933287742}
   m_Layer: 10
   m_Name: Enemy_Helmet
   m_TagString: Untagged
@@ -106,7 +106,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6799485052876487813
+--- !u!114 &5949418721933287742
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,17 +115,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8920259089154751975}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f44305e2e9b04ea19c32f12ac28a00ac, type: 3}
+  m_Script: {fileID: 11500000, guid: a16092c010d304246986e20abd8d0176, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy_Helmet
   agent: {fileID: 3872146506243029011}
   bloodPickupPrefab: {fileID: 4277246807266260747, guid: f63227d5a47d44628f91c57710fc8ae0, type: 3}
   awarenessRange: 12
-  preferredDistance: 6
-  distanceSlack: 1.5
-  retreatStep: 3
-  strafeDistance: 2
-  strafeFrequency: 1.5
   turnSpeed: 720
   repathInterval: 0.2
 --- !u!1001 &2488603380783857763
