@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Fin
   DisplayName: Fin
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 245975173923653074, guid: a29c817224a46c64ea9fd1610e55daa5, type: 3}
   MaxHealth: 12
   HealthIncreasePerWave: 2
   Damage: 1
