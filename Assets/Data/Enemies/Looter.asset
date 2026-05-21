@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Looter
   DisplayName: Looter
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 6799485052876487813, guid: d3e05a4b37dd7f64d87ac34b2aa90346, type: 3}
   MaxHealth: 50
   HealthIncreasePerWave: 25
   Damage: 1
