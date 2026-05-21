@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Charger
   DisplayName: Charger
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 2060003490495335820, guid: 89efc88d18f4a7b4285b7fb6be1822c7, type: 3}
   MaxHealth: 4
   HealthIncreasePerWave: 2.5
   Damage: 1
