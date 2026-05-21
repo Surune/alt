@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Persuer
   DisplayName: Persuer
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 7655060850541814243, guid: c9c2b321dda763d4dbd023043bf2ddc2, type: 3}
   MaxHealth: 10
   HealthIncreasePerWave: 24
   Damage: 1
   DamageIncreasePerWave: 1.2
-  MoveSpeed: 4
+  MoveSpeed: 1.5
   StartWave: 11
   BloodDropAmount: 3
