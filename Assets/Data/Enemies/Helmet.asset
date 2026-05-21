@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Helmet
   DisplayName: Helmet
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 6799485052876487813, guid: 6d0cc1cab96d9c2478339fa9bdeffd3c, type: 3}
   MaxHealth: 8
   HealthIncreasePerWave: 3
   Damage: 1

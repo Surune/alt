@@ -4,11 +4,6 @@ using UnityEngine.AI;
 public class Enemy_Baby : Enemy
 {
     [SerializeField] protected float awarenessRange = 12f;
-    [SerializeField] protected float preferredDistance = 6f;
-    [SerializeField] protected float distanceSlack = 1.5f;
-    [SerializeField] protected float retreatStep = 3f;
-    [SerializeField] protected float strafeDistance = 2f;
-    [SerializeField] protected float strafeFrequency = 1.5f;
     [SerializeField] protected float turnSpeed = 720f;
     [SerializeField] protected float repathInterval = 0.2f;
     
@@ -63,34 +58,7 @@ public class Enemy_Baby : Enemy
             return;
         }
 
-        toPlayer /= distance;
-
-        var awayFromPlayer = -toPlayer;
-        var strafeDirection = Vector3.Cross(Vector3.up, toPlayer);
-        if (Mathf.Sin(Time.time * strafeFrequency) < 0f)
-        {
-            strafeDirection = -strafeDirection;
-        }
-
-        var destination = transform.position;
-
-        if (distance < preferredDistance)
-        {
-            destination += awayFromPlayer * retreatStep;
-            destination += strafeDirection * strafeDistance;
-        }
-        else if (distance > preferredDistance + distanceSlack)
-        {
-            destination = player.position;
-            destination += awayFromPlayer * preferredDistance;
-            destination += strafeDirection * strafeDistance;
-        }
-        else
-        {
-            destination += awayFromPlayer * (distanceSlack * 0.5f);
-            destination += strafeDirection * strafeDistance;
-        }
-
+        var destination = player.position;
         var sampledPosition = destination;
         if (NavMesh.SamplePosition(destination, out var hit, 4f, NavMesh.AllAreas))
         {

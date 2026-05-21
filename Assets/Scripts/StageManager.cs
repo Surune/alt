@@ -126,11 +126,6 @@ public class StageManager : MonoBehaviour
 
     private void HandleAgentOnDeath(Enemy deadEnemy)
     {
-        if (deadEnemy is not Enemy_Baby)
-        {
-            return;
-        }
-
         aliveEnemyCount--;
     }
 }
