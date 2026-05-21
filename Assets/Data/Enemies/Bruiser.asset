@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Bruiser
   DisplayName: Bruiser
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 4099102707341287174, guid: 308de6d596ff63f499c6a2b61d1e5c85, type: 3}
   MaxHealth: 20
   HealthIncreasePerWave: 11
   Damage: 2
