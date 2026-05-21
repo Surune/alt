@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyId: Fly
   DisplayName: Fly
-  Prefab: {fileID: 6799485052876487813, guid: 595971797991f4543bd7a8a0840860bb, type: 3}
+  Prefab: {fileID: 2526346278632865101, guid: 23345713c4757f04a8200c2424510616, type: 3}
   MaxHealth: 15
   HealthIncreasePerWave: 4
   Damage: 1

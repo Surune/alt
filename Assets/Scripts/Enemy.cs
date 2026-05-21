@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour
         agent.speed = enemyData.MoveSpeed;
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         currentHealth -= damage;
 
