@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
-public class PlayerMover : MonoBehaviour
+public class Player : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
     public static event Action<int, int> HealthChanged;
@@ -14,10 +14,9 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private InputActionReference rollAction;
-    [SerializeField] private int maxHealth = 20;
+    [SerializeField] private int maxHealth = 25;
     [SerializeField] private int fearShotCount = 1;
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rollSpeed = 8f;
+    [SerializeField] private float speed = 4.5f;
     [SerializeField] private float rollDuration = 0.3f;
     [SerializeField] private float rollCooldown = 0.5f;
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
@@ -115,7 +114,7 @@ public class PlayerMover : MonoBehaviour
 
         if (IsRolling)
         {
-            var rollPosition = rb.position + (rollDirection * rollSpeed * Time.fixedDeltaTime);
+            var rollPosition = rb.position + (rollDirection * speed * Time.fixedDeltaTime);
             var rollProgress = (Time.time - rollStartTime) / rollDuration;
             var rollRotation = rollBaseRotation * Quaternion.Euler(rollProgress * 360f, 0f, 0f);
 
@@ -132,7 +131,7 @@ public class PlayerMover : MonoBehaviour
 
         moveDirection.Normalize();
 
-        var nextPosition = rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime);
+        var nextPosition = rb.position + (moveDirection * speed * Time.fixedDeltaTime);
         rb.MovePosition(nextPosition);
     }
 

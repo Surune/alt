@@ -35,7 +35,7 @@ Transform:
   - {fileID: 8173652596380224876}
   - {fileID: 8274243590514133516}
   - {fileID: 5620540094294659054}
-  - {fileID: 1635481640070916580}
+  - {fileID: 5327433660431910926}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5233855776799049001
@@ -111,7 +111,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 758063c94d63d9d458bb6833343791db, type: 2}
   - {fileID: 11400000, guid: 507e070debdb63a46a0b086a7455fcdf, type: 2}
   roundStartDelay: 0.75
-  defaultRoundDuration: 15
   roundDurations:
   - 20
   - 25
@@ -996,7 +995,7 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1001 &1069933053304312496
+--- !u!1001 &5874267468376994650
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1006,7 +1005,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1040,10 +1043,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4040685249421190076, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 8920259089154751975, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1053,8 +1052,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
---- !u!4 &1635481640070916580 stripped
+--- !u!4 &5327433660431910926 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1759587574457744212, guid: 8f5b627da805b634d8437c1a232e5d98, type: 3}
-  m_PrefabInstance: {fileID: 1069933053304312496}
+  m_PrefabInstance: {fileID: 5874267468376994650}
   m_PrefabAsset: {fileID: 0}

@@ -8,7 +8,7 @@ public class PopupCardUI : MonoBehaviour
 
     public bool Initialize()
     {
-        var player = FindFirstObjectByType<PlayerMover>();
+        var player = FindFirstObjectByType<Player>();
         var availableWeapons = new List<WeaponData>(player.GetUnownedWeapons());
         if (availableWeapons.Count == 0)
         {
@@ -35,7 +35,7 @@ public class PopupCardUI : MonoBehaviour
         return true;
     }
 
-    private void SelectWeapon(PlayerMover player, WeaponData weapon)
+    private void SelectWeapon(Player player, WeaponData weapon)
     {
         player.AcquireWeapon(weapon);
         Close();

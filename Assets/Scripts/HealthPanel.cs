@@ -9,18 +9,18 @@ public class HealthPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerMover.HealthChanged += HandleHealthChanged;
+        Player.HealthChanged += HandleHealthChanged;
     }
 
     private void Start()
     {
-        var player = FindFirstObjectByType<PlayerMover>();
+        var player = FindFirstObjectByType<Player>();
         HandleHealthChanged(player.CurrentHealth, player.MaxHealth);
     }
 
     private void OnDisable()
     {
-        PlayerMover.HealthChanged -= HandleHealthChanged;
+        Player.HealthChanged -= HandleHealthChanged;
     }
 
     private void HandleHealthChanged(int currentHealth, int maxHealth)

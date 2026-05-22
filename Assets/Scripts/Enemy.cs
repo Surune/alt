@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        player = FindFirstObjectByType<PlayerMover>().transform;
+        player = FindFirstObjectByType<Player>().transform;
         agent.baseOffset = 0f;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -89,7 +89,7 @@ public class Enemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
+        if (collision.gameObject.TryGetComponent<Player>(out var playerMover))
         {
             playerMover.TakeDamage(contactDamage);
         }

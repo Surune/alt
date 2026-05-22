@@ -72,7 +72,7 @@ public class BloodPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var player = other.GetComponent<PlayerMover>();
+        var player = other.GetComponent<Player>();
         if (player == null)
         {
             return;

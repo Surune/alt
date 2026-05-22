@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerMover.CurrentWeaponChanged += HandleCurrentWeaponChanged;
+        Player.CurrentWeaponChanged += HandleCurrentWeaponChanged;
     }
 
     public void ShowPopupCard()
@@ -51,7 +51,7 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        PlayerMover.CurrentWeaponChanged -= HandleCurrentWeaponChanged;
+        Player.CurrentWeaponChanged -= HandleCurrentWeaponChanged;
 
         if (Instance == this)
         {

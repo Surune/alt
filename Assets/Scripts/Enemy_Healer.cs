@@ -135,4 +135,12 @@ public class Enemy_Healer : Enemy
             enemy.RestoreHealth(amount);
         }
     }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent<Player>(out var playerMover))
+        {
+            playerMover.TakeDamage(contactDamage);
+        }
+    }
 }
