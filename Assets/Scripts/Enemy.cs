@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
+    public static event Action<Enemy> OnSpawned;
     public static event Action<Enemy> OnDeath;
 
     [SerializeField] protected NavMeshAgent agent;
@@ -19,7 +20,7 @@ public class Enemy : MonoBehaviour
     protected float baseMaxHealth;
     protected float baseContactDamage;
     protected float baseMoveSpeed;
-    private int bloodDropAmount;
+    protected int bloodDropAmount;
     private int activeSupportBuffCount;
     private readonly List<Material> highlightMaterials = new();
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
@@ -60,6 +61,16 @@ public class Enemy : MonoBehaviour
             return;
         }
 
+        Die();
+    }
+
+    protected void NotifySpawned(Enemy enemy)
+    {
+        OnSpawned?.Invoke(enemy);
+    }
+
+    protected void Die()
+    {
         SpawnBloodPickup(bloodDropAmount);
         OnDeath?.Invoke(this);
         Destroy(gameObject);
@@ -95,7 +106,7 @@ public class Enemy : MonoBehaviour
         }
     }
     
-    private void SpawnBloodPickup(int amount)
+    protected void SpawnBloodPickup(int amount)
     {
         var bloodPosition = transform.position;
         var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);

@@ -15,6 +15,7 @@ public class StageManager : MonoBehaviour
 
     private void OnEnable()
     {
+        Enemy.OnSpawned += HandleEnemySpawned;
         Enemy.OnDeath += HandleAgentOnDeath;
     }
 
@@ -25,6 +26,7 @@ public class StageManager : MonoBehaviour
 
     private void OnDisable()
     {
+        Enemy.OnSpawned -= HandleEnemySpawned;
         Enemy.OnDeath -= HandleAgentOnDeath;
     }
 
@@ -127,5 +129,10 @@ public class StageManager : MonoBehaviour
     private void HandleAgentOnDeath(Enemy deadEnemy)
     {
         aliveEnemyCount--;
+    }
+
+    private void HandleEnemySpawned(Enemy spawnedEnemy)
+    {
+        aliveEnemyCount++;
     }
 }
