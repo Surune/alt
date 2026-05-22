@@ -161,12 +161,4 @@ public class Enemy_Bruiser : Enemy
 
         state = BruiserState.Chase;
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }

@@ -67,12 +67,4 @@ public class Enemy_Baby : Enemy
 
         agent.SetDestination(sampledPosition);
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }

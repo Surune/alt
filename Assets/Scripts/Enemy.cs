@@ -86,6 +86,14 @@ public class Enemy : MonoBehaviour
         activeSupportBuffCount--;
         RefreshSupportBuff();
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
+        {
+            playerMover.TakeDamage(contactDamage);
+        }
+    }
     
     private void SpawnBloodPickup(int amount)
     {

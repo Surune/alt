@@ -79,12 +79,4 @@ public class Enemy_Looter : Enemy
 
         agent.SetDestination(destination);
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }

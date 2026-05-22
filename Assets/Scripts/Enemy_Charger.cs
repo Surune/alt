@@ -161,12 +161,4 @@ public class Enemy_Charger : Enemy
 
         state = ChargerState.Chase;
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }

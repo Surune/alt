@@ -156,12 +156,4 @@ public class Enemy_Spitter : Enemy
         var shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotDirection.normalized, shotSpeed, shotRange);
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }

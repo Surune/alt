@@ -90,12 +90,4 @@ public class Enemy_Fly : Enemy
         var shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotDirection, shotSpeed, shotRange);
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerMover>(out var playerMover))
-        {
-            playerMover.TakeDamage(contactDamage);
-        }
-    }
 }
