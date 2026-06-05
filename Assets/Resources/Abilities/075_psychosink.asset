@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1000000000000000000000000000001, type: 3}
+  m_Name: 075_psychosink
+  m_EditorClassIdentifier: 
+  abilityID: 75
+  abilityType: 0
+  icon: {fileID: 21300000, guid: 4884775cb4d1e4041be6c77a375acfc4, type: 3}
+  primarySynergy: 0
+  secondarySynergy: 0
+  effects:
+  - kind: 31
+    abilityManagerFlag: 0
+    operation: 0
+    playerManagerFloatStat: 0
+    playerManagerBoolStat: 0
+    spawnerFloatStat: 0
+    spawnerBoolStat: 0
+    hpBoolStat: 0
+    expBoolStat: 0
+    value: 0.8
+    secondValue: 0.01
+    amount: 0
+    secondAmount: 0
+    enabledValue: 1
+  - kind: 2
+    abilityManagerFlag: 9
+    operation: 0
+    playerManagerFloatStat: 0
+    playerManagerBoolStat: 0
+    spawnerFloatStat: 0
+    spawnerBoolStat: 0
+    hpBoolStat: 0
+    expBoolStat: 0
+    value: 0
+    secondValue: 0
+    amount: 0
+    secondAmount: 0
+    enabledValue: 1

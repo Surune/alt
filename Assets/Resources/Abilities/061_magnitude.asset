@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1000000000000000000000000000001, type: 3}
+  m_Name: 061_magnitude
+  m_EditorClassIdentifier: 
+  abilityID: 61
+  abilityType: 0
+  icon: {fileID: 21300000, guid: 6c18b72fb6a484fec88a4c4e590669b2, type: 3}
+  primarySynergy: 1
+  secondarySynergy: 0
+  effects:
+  - kind: 7
+    abilityManagerFlag: 0
+    operation: 3
+    playerManagerFloatStat: 0
+    playerManagerBoolStat: 0
+    spawnerFloatStat: 3
+    spawnerBoolStat: 0
+    hpBoolStat: 0
+    expBoolStat: 0
+    value: 0.5
+    secondValue: 0
+    amount: 0
+    secondAmount: 0
+    enabledValue: 1
+  - kind: 14
+    abilityManagerFlag: 0
+    operation: 0
+    playerManagerFloatStat: 0
+    playerManagerBoolStat: 0
+    spawnerFloatStat: 0
+    spawnerBoolStat: 0
+    hpBoolStat: 0
+    expBoolStat: 0
+    value: 0
+    secondValue: 0
+    amount: 1
+    secondAmount: 0
+    enabledValue: 1
