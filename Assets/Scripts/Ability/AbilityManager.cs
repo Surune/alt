@@ -41,13 +41,11 @@ public class AbilityManager : MonoBehaviour
 
     readonly List<GameObject> abilityViews = new();
     readonly List<AbilityData> selectedAbilities = new();
-    readonly List<int> selectedAbilityIds = new();
     Dictionary<int, AbilityData> abilityById;
     Dictionary<AbilityManagerFlag, Action> flagSetters;
     Player player;
 
     public IReadOnlyList<AbilityData> SelectedAbilities => selectedAbilities;
-    public IReadOnlyList<int> SelectedAbilityIds => selectedAbilityIds;
     public int AbilityCount => abilityCatalog.Length;
 
     private void Awake()
@@ -104,7 +102,6 @@ public class AbilityManager : MonoBehaviour
     {
         var abilityData = abilityById[id];
         selectedAbilities.Add(abilityData);
-        selectedAbilityIds.Add(id);
 
         AddSynergy(abilityData.PrimarySynergy);
         AddSynergy(abilityData.SecondarySynergy);
