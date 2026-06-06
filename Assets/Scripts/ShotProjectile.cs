@@ -40,6 +40,7 @@ public class ShotProjectile : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+            SpawnBloodPickup();
             Destroy(gameObject);
             return;
         }
