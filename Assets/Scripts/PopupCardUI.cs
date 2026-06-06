@@ -8,36 +8,54 @@ public class PopupCardUI : MonoBehaviour
 
     public bool Initialize()
     {
-        var player = FindFirstObjectByType<Player>();
-        var availableWeapons = new List<WeaponData>(player.GetUnownedWeapons());
-        if (availableWeapons.Count == 0)
+        var abilityManager = AbilityManager.Instance;
+        var availableAbilities = new List<AbilityData>(abilityManager.GetUnselectedAbilities());
+        if (availableAbilities.Count == 0)
         {
             return false;
         }
 
-        for (var i = availableWeapons.Count - 1; i > 0; i--)
+        for (var i = availableAbilities.Count - 1; i > 0; i--)
         {
             var swapIndex = Random.Range(0, i + 1);
-            var temp = availableWeapons[i];
-            availableWeapons[i] = availableWeapons[swapIndex];
-            availableWeapons[swapIndex] = temp;
+            var temp = availableAbilities[i];
+            availableAbilities[i] = availableAbilities[swapIndex];
+            availableAbilities[swapIndex] = temp;
         }
 
-        var cardCount = Mathf.Min(3, availableWeapons.Count);
+        var localization = LoadLocalization();
+        var cardCount = Mathf.Min(3, availableAbilities.Count);
         for (var i = 0; i < cardCount; i++)
         {
-            var weapon = availableWeapons[i];
+            var ability = availableAbilities[i];
+            var nameLkey = $"ability_{ability.AbilityID}_name";
+            var descriptionLkey = $"ability_{ability.AbilityID}_description";
             var card = Instantiate(cardPrefab, cardRoot);
-            card.Init(weapon);
-            card.SetClickAction(() => SelectWeapon(player, weapon));
+            card.Init(ability, localization[nameLkey], localization[descriptionLkey]);
+            card.SetClickAction(() => SelectAbility(abilityManager, ability));
         }
 
         return true;
     }
 
-    private void SelectWeapon(Player player, WeaponData weapon)
+    private static Dictionary<string, string> LoadLocalization()
     {
-        player.AcquireWeapon(weapon);
+        var locale = Application.systemLanguage == SystemLanguage.Korean ? "kr" : "en";
+        var localization = new Dictionary<string, string>();
+        var rows = CSVReader.Read("localization");
+
+        for (var i = 0; i < rows.Count; i++)
+        {
+            var row = rows[i];
+            localization.Add((string)row["lkey"], row[locale].ToString());
+        }
+
+        return localization;
+    }
+
+    private void SelectAbility(AbilityManager abilityManager, AbilityData ability)
+    {
+        abilityManager.AddAbility(ability);
         Close();
     }
 

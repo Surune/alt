@@ -41,6 +41,12 @@ public class StageManager : MonoBehaviour
             StartRound();
             yield return WaitForRoundEnd();
             AdvanceRound();
+
+            if (currentRound <= totalRounds)
+            {
+                UIManager.Instance.ShowPopupCard();
+                yield return new WaitUntil(() => !UIManager.Instance.IsPopupCardOpen);
+            }
         }
 
         Debug.Log($"All {totalRounds} rounds completed.");

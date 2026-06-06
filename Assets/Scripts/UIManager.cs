@@ -47,6 +47,7 @@ public class UIManager : MonoBehaviour
     {
         Destroy(activePopupCard);
         activePopupCard = null;
+        GameStateManager.Instance.EnterPlayingState();
     }
 
     private void OnDestroy()

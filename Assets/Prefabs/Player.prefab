@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6613040455332606920}
   - component: {fileID: 6440261403373862725}
   - component: {fileID: 8408876409133192089}
+  - component: {fileID: 7394275891643826601}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -107,6 +108,19 @@ MonoBehaviour:
   rollDuration: 0.3
   rollCooldown: 0.5
   damageInvincibilityDuration: 0.5
+--- !u!114 &7394275891643826601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920259089154751975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6647a0e56b466044093e1a0b9ceed42e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  SynergyColors: []
 --- !u!1001 &7596266864359351710
 PrefabInstance:
   m_ObjectHideFlags: 0

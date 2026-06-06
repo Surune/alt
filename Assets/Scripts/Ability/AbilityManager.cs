@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AbilityManager : MonoBehaviour
 {
@@ -35,13 +34,8 @@ public class AbilityManager : MonoBehaviour
     public bool fracture = false;
     public bool firm = false;
 
-    [SerializeField] GameObject abilityPrefab;
-    [SerializeField] AbilityData[] abilityCatalog;
-    [SerializeField] GameObject content;
-
-    readonly List<GameObject> abilityViews = new();
+    AbilityData[] abilityCatalog;
     readonly List<AbilityData> selectedAbilities = new();
-    Dictionary<int, AbilityData> abilityById;
     Dictionary<AbilityManagerFlag, Action> flagSetters;
     Player player;
 
@@ -54,17 +48,7 @@ public class AbilityManager : MonoBehaviour
         player = FindFirstObjectByType<Player>();
         abilityCatalog = Resources.LoadAll<AbilityData>("Abilities");
         Synergy = new int[11];
-        CacheAbilityCatalog();
         CacheFlagSetters();
-    }
-
-    private void CacheAbilityCatalog()
-    {
-        abilityById = new Dictionary<int, AbilityData>(abilityCatalog.Length);
-        foreach (var ability in abilityCatalog)
-        {
-            abilityById.Add(ability.AbilityID, ability);
-        }
     }
 
     private void CacheFlagSetters()
@@ -98,15 +82,29 @@ public class AbilityManager : MonoBehaviour
         };
     }
 
-    private void AddAbility(int id)
+    public AbilityData[] GetUnselectedAbilities()
     {
-        var abilityData = abilityById[id];
+        var abilities = new List<AbilityData>();
+        for (var i = 0; i < abilityCatalog.Length; i++)
+        {
+            var ability = abilityCatalog[i];
+            if (!selectedAbilities.Contains(ability))
+            {
+                abilities.Add(ability);
+            }
+        }
+
+        return abilities.ToArray();
+    }
+
+    public void AddAbility(AbilityData abilityData)
+    {
         selectedAbilities.Add(abilityData);
 
         AddSynergy(abilityData.PrimarySynergy);
         AddSynergy(abilityData.SecondarySynergy);
 
-        var ability = CreateAbilityView(abilityData);
+        var ability = CreateAbility(abilityData);
         var context = new AbilityApplyContext(this, ability, abilityData, player);
         abilityData.Apply(context);
     }
@@ -120,7 +118,7 @@ public class AbilityManager : MonoBehaviour
     {
         for (var i = 0; i < count; i++)
         {
-            AddAbility(UnityEngine.Random.Range(0, AbilityCount));
+            AddAbility(abilityCatalog[UnityEngine.Random.Range(0, AbilityCount)]);
         }
     }
 
@@ -129,18 +127,13 @@ public class AbilityManager : MonoBehaviour
         Synergy[synergyType]++;
     }
 
-    private Ability CreateAbilityView(AbilityData abilityData)
+    private Ability CreateAbility(AbilityData abilityData)
     {
-        var abilityViewObject = Instantiate(abilityPrefab, content.transform);
-        abilityViews.Add(abilityViewObject);
-
-        var ability = abilityViewObject.GetComponent<Ability>();
-        var icon = abilityViewObject.transform.Find("Icon").GetComponent<Image>();
-        icon.sprite = abilityData.Icon;
-
+        var abilityObject = new GameObject(abilityData.name);
+        abilityObject.transform.SetParent(transform);
+        var ability = abilityObject.AddComponent<Ability>();
         ability.AbilityID = abilityData.AbilityID;
         ability.AbilityType = abilityData.AbilityType;
-        ability.AbilityImage.color = SynergyColors[abilityData.PrimarySynergy];
         return ability;
     }
 }

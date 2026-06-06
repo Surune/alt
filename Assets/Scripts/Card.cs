@@ -34,11 +34,11 @@ public class Card : MonoBehaviour, IPointerMoveHandler, IPointerDownHandler, IPo
         foilOverlay.material = foilMat;
     }
 
-    public void Init(WeaponData data)
+    public void Init(AbilityData data, string displayName, string description)
     {
         icon.sprite = data.Icon;
-        cardName.text = data.DisplayName;
-        cardDescription.text = data.Description;
+        cardName.text = displayName;
+        cardDescription.text = description;
     }
 
     private void Update()
