@@ -54,9 +54,14 @@ public class StageManager : MonoBehaviour
 
     private void StartRound()
     {
+        if (AbilityManager.Instance.DisableEnemySpawning)
+        {
+            return;
+        }
+
         var wave = GetCurrentWave();
         var roundSquare = currentRound * currentRound;
-        var spawnCount = roundSquare + 1;
+        var spawnCount = roundSquare + 1 + AbilityManager.Instance.AdditionalEnemyCount;
         var availableEnemies = GetAvailableEnemies(wave);
 
         for (var i = 0; i < spawnCount; i++)

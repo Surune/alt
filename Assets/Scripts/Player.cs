@@ -34,6 +34,9 @@ public class Player : MonoBehaviour
     private float nextBurstShotTime;
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
+    private int barrier;
+    private Vector3 lastPosition;
+    private float movedDistance;
 
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
@@ -47,6 +50,7 @@ public class Player : MonoBehaviour
     {
         cam = Camera.main;
         currentHealth = maxHealth;
+        lastPosition = rb.position;
         NotifyHealthChanged();
     }
     
@@ -133,6 +137,8 @@ public class Player : MonoBehaviour
 
         var nextPosition = rb.position + (moveDirection * speed * Time.fixedDeltaTime);
         rb.MovePosition(nextPosition);
+        movedDistance += Vector3.Distance(lastPosition, nextPosition);
+        lastPosition = nextPosition;
     }
 
     private void StartRoll()
@@ -167,7 +173,7 @@ public class Player : MonoBehaviour
 
         queuedBurstShots = CurrentWeapon.BurstCount;
         FireBurstShot();
-        nextShotTime = Time.time + CurrentWeapon.FireInterval;
+        nextShotTime = Time.time + AbilityManager.Instance.GetFireInterval(CurrentWeapon.FireInterval);
     }
 
     private void FireBurstShot()
@@ -199,11 +205,18 @@ public class Player : MonoBehaviour
 
     private bool CanFireCurrentWeapon()
     {
-        return currentHealth > CurrentWeapon.ProjectilesPerShot;
+        return AbilityManager.Instance.CanFire && currentHealth > CurrentWeapon.ProjectilesPerShot;
     }
 
     private void FireShotPattern(Vector3 aimDirection)
     {
+        if (AbilityManager.Instance.Fracture)
+        {
+            SpawnProjectile(Quaternion.AngleAxis(-45f, Vector3.up) * aimDirection);
+            SpawnProjectile(Quaternion.AngleAxis(45f, Vector3.up) * aimDirection);
+            return;
+        }
+
         if (CurrentWeapon.ProjectilesPerShot == 1)
         {
             SpawnProjectile(aimDirection);
@@ -223,13 +236,12 @@ public class Player : MonoBehaviour
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(
-            shotDirection.normalized,
-            CurrentWeapon.ProjectileSpeed,
-            CurrentWeapon.ProjectileRange,
-            CurrentWeapon.Damage
-        );
+        FireProjectile(shotDirection, CurrentWeapon.Damage, 0, false);
+        if (AbilityManager.Instance.Awaken)
+        {
+            FireProjectile(Quaternion.AngleAxis(-8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false);
+            FireProjectile(Quaternion.AngleAxis(8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false);
+        }
     }
 
     private void HandleWeaponScroll()
@@ -316,7 +328,15 @@ public class Player : MonoBehaviour
             return;
         }
 
-        currentHealth -= (int)damage;
+        if (barrier > 0)
+        {
+            barrier--;
+            AbilityManager.Instance.OnBarrierBroken();
+            return;
+        }
+
+        currentHealth -= Mathf.CeilToInt(damage);
+        AbilityManager.Instance.OnPlayerDamaged(damage);
         damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
         NotifyHealthChanged();
         if (currentHealth <= 0)
@@ -334,6 +354,100 @@ public class Player : MonoBehaviour
         }
 
         NotifyHealthChanged();
+    }
+
+    public void AddBarrier(int amount)
+    {
+        barrier += amount;
+    }
+
+    public void ChangeMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    public void ChangeMaxHealthByPercent(float percent)
+    {
+        maxHealth += Mathf.RoundToInt(maxHealth * percent);
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    public void ChangeHealthScale(float maxHealthScale, float healthScale)
+    {
+        maxHealth = Mathf.CeilToInt(maxHealth * maxHealthScale);
+        currentHealth = Mathf.CeilToInt(currentHealth * healthScale);
+        NotifyHealthChanged();
+    }
+
+    public void HealToFull()
+    {
+        currentHealth = maxHealth;
+        NotifyHealthChanged();
+    }
+
+    public float ConsumeMovedDistance()
+    {
+        var distance = movedDistance;
+        movedDistance = 0f;
+        return distance;
+    }
+
+    public Vector3 GetDirectionTo(Vector3 position)
+    {
+        var direction = position - rb.position;
+        direction.y = 0f;
+        return direction.normalized;
+    }
+
+    public Vector3 GetNearestEnemyDirection()
+    {
+        return GetDirectionTo(Enemy.GetNearestPosition(rb.position));
+    }
+
+    public void FireAbilityProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
+    {
+        FireProjectile(direction, projectileDamage, pierce, homing);
+    }
+
+    public void FireWingProjectile(Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
+    {
+        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var abilityData = AbilityManager.Instance.CreateWingProjectileData(projectileDamage, homing, freezing);
+        shotInstance.Initialize(
+            direction.normalized,
+            AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed) * speedCoefficient,
+            CurrentWeapon.ProjectileRange,
+            abilityData
+        );
+    }
+
+    public void FireFatalProjectile(Vector3 direction)
+    {
+        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(0f));
+        shotInstance.ForceFatal();
+    }
+
+    public void FireCriticalProjectile(Vector3 direction)
+    {
+        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(CurrentWeapon.Damage));
+        shotInstance.ForceCritical();
+    }
+
+    private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
+    {
+        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var abilityData = AbilityManager.Instance.CreateProjectileData(projectileDamage, pierce, homing);
+        shotInstance.Initialize(
+            direction.normalized,
+            AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed),
+            CurrentWeapon.ProjectileRange,
+            abilityData
+        );
     }
 
     public WeaponData[] GetUnownedWeapons()

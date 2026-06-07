@@ -9,7 +9,7 @@ public class Enemy_Spawner : Enemy_Baby
     [SerializeField] private float spawnRadius = 1.25f;
     [SerializeField] private float navMeshSampleDistance = 3f;
 
-    public override void TakeDamage(int damage)
+    public override void TakeDamage(float damage)
     {
         currentHealth -= damage;
 

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class BloodPickup : MonoBehaviour
 {
+    public static event System.Action<Player> OnCollected;
     private static readonly System.Collections.Generic.List<BloodPickup> ActivePickups = new();
 
     [SerializeField] private int healAmount = 1;
@@ -79,6 +80,7 @@ public class BloodPickup : MonoBehaviour
         }
 
         player.Heal(healAmount);
+        OnCollected?.Invoke(player);
         Destroy(gameObject);
     }
 }

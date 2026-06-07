@@ -5,26 +5,35 @@ public class ShotProjectile : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
-    [SerializeField] private int damage = 1;
+    [SerializeField] private float damage = 1;
     [SerializeField] private BloodPickup bloodPickupPrefab;
 
     private Vector3 direction;
     private Vector3 startPosition;
     private float speed;
     private float maxDistance;
+    private ProjectileAbilityData abilityData;
+    private int remainingPierce;
 
-    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, int shotDamage)
+    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, ProjectileAbilityData projectileAbilityData)
     {
         direction = shotDirection;
         startPosition = rb.position;
         speed = shotSpeed;
         maxDistance = shotRange;
-        damage = shotDamage;
+        abilityData = projectileAbilityData;
+        damage = abilityData.Damage;
+        remainingPierce = abilityData.Pierce;
         rb.linearVelocity = direction * speed;
     }
 
     private void FixedUpdate()
     {
+        if (abilityData.Homing)
+        {
+            direction = Vector3.RotateTowards(direction, Enemy.GetNearestPosition(rb.position) - rb.position, Time.fixedDeltaTime * 4f, 0f).normalized;
+        }
+
         rb.linearVelocity = direction * speed;
 
         var distanceVector = rb.position - startPosition;
@@ -39,8 +48,35 @@ public class ShotProjectile : MonoBehaviour
         var enemy = collision.gameObject.GetComponent<Enemy>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            if (abilityData.IsFatal)
+            {
+                enemy.TakeFatalDamage(AbilityManager.Instance.BossFatalDamage);
+            }
+            else
+            {
+                var hitDamage = abilityData.Culling && enemy.IsFullHealth ? damage * 1.25f : damage;
+                enemy.TakeDamage(hitDamage);
+            }
+
+            if (abilityData.AllTarget)
+            {
+                Enemy.DamageAll(damage, enemy);
+            }
+
+            if (abilityData.Freezing)
+            {
+                enemy.Slow(0.75f, 2f);
+            }
+
+            AbilityManager.Instance.OnProjectileHit(enemy, abilityData);
             SpawnBloodPickup();
+            if (remainingPierce > 0)
+            {
+                remainingPierce--;
+                Physics.IgnoreCollision(shotCollider, collision.collider);
+                return;
+            }
+
             Destroy(gameObject);
             return;
         }
@@ -51,6 +87,17 @@ public class ShotProjectile : MonoBehaviour
             SpawnBloodPickup();
             Destroy(gameObject);
         }
+    }
+
+    public void ForceFatal()
+    {
+        abilityData = new ProjectileAbilityData(damage, abilityData.IsCritical, true, abilityData.Pierce, abilityData.Homing, abilityData.AllTarget, abilityData.Freezing, abilityData.Culling, abilityData.Psychosense);
+    }
+
+    public void ForceCritical()
+    {
+        abilityData = new ProjectileAbilityData(damage * 1.5f, true, abilityData.IsFatal, abilityData.Pierce, abilityData.Homing, abilityData.AllTarget, abilityData.Freezing, abilityData.Culling, abilityData.Psychosense);
+        damage = abilityData.Damage;
     }
 
     private void SpawnBloodPickup()

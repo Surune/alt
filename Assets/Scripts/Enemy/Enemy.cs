@@ -24,6 +24,10 @@ public class Enemy : MonoBehaviour
     private int activeSupportBuffCount;
     private readonly List<Material> highlightMaterials = new();
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+    private static readonly List<Enemy> ActiveEnemies = new();
+
+    public bool IsFullHealth => currentHealth >= maxHealth;
+    public bool IsDead => currentHealth <= 0f;
 
     private void Reset()
     {
@@ -32,6 +36,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        ActiveEnemies.Add(this);
         player = FindFirstObjectByType<Player>().transform;
         agent.baseOffset = 0f;
         agent.updateRotation = false;
@@ -46,13 +51,30 @@ public class Enemy : MonoBehaviour
         bloodDropAmount = enemyData.BloodDropAmount;
         baseContactDamage = enemyData.Damage + (enemyData.DamageIncreasePerWave * waveOffset);
         baseMoveSpeed = enemyData.MoveSpeed;
+        var abilityManager = AbilityManager.Instance;
+        baseMaxHealth += abilityManager.EnemyHealthOffset;
+        baseContactDamage *= abilityManager.EnemyDamageCoefficient;
+        baseMoveSpeed *= abilityManager.EnemySpeedCoefficient;
         maxHealth = baseMaxHealth;
         currentHealth = maxHealth;
         contactDamage = baseContactDamage;
         agent.speed = baseMoveSpeed;
+
+        if (abilityManager.SpawnSmall)
+        {
+            transform.localScale *= 0.75f;
+        }
+
+        if (abilityManager.SpawnRandom)
+        {
+            var randomScale = Random.Range(0.65f, 1.35f);
+            transform.localScale *= randomScale;
+            maxHealth *= randomScale;
+            currentHealth = maxHealth;
+        }
     }
 
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(float damage)
     {
         currentHealth -= damage;
 
@@ -62,6 +84,73 @@ public class Enemy : MonoBehaviour
         }
 
         Die();
+    }
+
+    public void TakeFatalDamage(float bossDamage)
+    {
+        TakeDamage(this is Boss ? maxHealth * bossDamage : maxHealth);
+    }
+
+    public void Slow(float coefficient, float duration)
+    {
+        StopCoroutine(nameof(RestoreSpeed));
+        agent.speed = baseMoveSpeed * coefficient;
+        StartCoroutine(nameof(RestoreSpeed), duration);
+    }
+
+    private System.Collections.IEnumerator RestoreSpeed(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        agent.speed = baseMoveSpeed;
+    }
+
+    public static void DamageAll(float damage, Enemy excludedEnemy = null)
+    {
+        var snapshot = ActiveEnemies.ToArray();
+        for (var i = 0; i < snapshot.Length; i++)
+        {
+            if (snapshot[i] != excludedEnemy)
+            {
+                snapshot[i].TakeDamage(damage);
+            }
+        }
+    }
+
+    public static void SlowAll(float coefficient, float duration)
+    {
+        for (var i = 0; i < ActiveEnemies.Count; i++)
+        {
+            ActiveEnemies[i].Slow(coefficient, duration);
+        }
+    }
+
+    public static void PullAllTowards(Vector3 position, float distance)
+    {
+        for (var i = 0; i < ActiveEnemies.Count; i++)
+        {
+            var enemy = ActiveEnemies[i];
+            var direction = position - enemy.transform.position;
+            direction.y = 0f;
+            enemy.agent.Warp(enemy.transform.position + direction.normalized * Mathf.Min(distance, direction.magnitude));
+        }
+    }
+
+    public static Vector3 GetNearestPosition(Vector3 position)
+    {
+        var nearestPosition = position + Vector3.forward;
+        var nearestDistance = float.MaxValue;
+        for (var i = 0; i < ActiveEnemies.Count; i++)
+        {
+            var enemyPosition = ActiveEnemies[i].transform.position;
+            var distance = (enemyPosition - position).sqrMagnitude;
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestPosition = enemyPosition;
+            }
+        }
+
+        return nearestPosition;
     }
 
     protected void NotifySpawned(Enemy enemy)
@@ -185,6 +274,7 @@ public class Enemy : MonoBehaviour
 
     private void OnDestroy()
     {
+        ActiveEnemies.Remove(this);
         for (var i = 0; i < highlightMaterials.Count; i++)
         {
             Destroy(highlightMaterials[i]);
