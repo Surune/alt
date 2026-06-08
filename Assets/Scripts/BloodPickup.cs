@@ -12,9 +12,12 @@ public class BloodPickup : MonoBehaviour
     [SerializeField] private float maxScale = 2.4f;
     [SerializeField] private float floatAmplitude = 0.1f;
     [SerializeField] private float floatFrequency = 2f;
+    [SerializeField] private float collectSpeed = 10f;
 
     private float baseY;
     private float floatOffset;
+    private Player collectingPlayer;
+    private bool isCollecting;
 
     public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation, int amount)
     {
@@ -35,6 +38,15 @@ public class BloodPickup : MonoBehaviour
         pickup.SetHealAmount(amount);
     }
 
+    public static void CollectAll(Player player)
+    {
+        for (var i = 0; i < ActivePickups.Count; i++)
+        {
+            ActivePickups[i].collectingPlayer = player;
+            ActivePickups[i].isCollecting = true;
+        }
+    }
+
     private void Awake()
     {
         baseY = transform.position.y;
@@ -49,6 +61,21 @@ public class BloodPickup : MonoBehaviour
 
     private void Update()
     {
+        if (isCollecting)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                collectingPlayer.transform.position,
+                collectSpeed * Time.unscaledDeltaTime);
+
+            if ((transform.position - collectingPlayer.transform.position).sqrMagnitude <= 0.01f)
+            {
+                Collect(collectingPlayer);
+            }
+
+            return;
+        }
+
         var position = transform.position;
         position.y = baseY + ((Mathf.Sin(Time.time * floatFrequency + floatOffset) * 0.5f + 0.5f) * floatAmplitude);
         transform.position = position;
@@ -79,6 +106,11 @@ public class BloodPickup : MonoBehaviour
             return;
         }
 
+        Collect(player);
+    }
+
+    private void Collect(Player player)
+    {
         player.Heal(healAmount);
         OnCollected?.Invoke(player);
         Destroy(gameObject);

@@ -4,6 +4,7 @@ using UnityEngine;
 public enum GameState
 {
     Playing,
+    RoundTransition,
     CardPopup
 }
 
@@ -42,9 +43,16 @@ public class GameStateManager : MonoBehaviour
         StateChanged?.Invoke(CurrentState);
     }
 
+    public void EnterRoundTransitionState()
+    {
+        CurrentState = GameState.RoundTransition;
+        ApplyTimeScale();
+        StateChanged?.Invoke(CurrentState);
+    }
+
     private void ApplyTimeScale()
     {
-        Time.timeScale = CurrentState == GameState.Playing ? 1f : 0f;
+        Time.timeScale = CurrentState == GameState.CardPopup ? 0f : 1f;
     }
 
     private void OnDestroy()

@@ -7,12 +7,25 @@ public class StageManager : MonoBehaviour
 {
     [SerializeField] private EnemyData[] enemyCatalog;
     [SerializeField] private float roundStartDelay = 0.75f;
+    [SerializeField] private float cardPopupDelay = 1f;
     [SerializeField] private float[] roundDurations = { 15f };
     [SerializeField] private float spawnInnerRadius = 3.5f;
     [SerializeField] private float spawnOuterRadius = 4.75f;
 
     private int currentRound = 1;
     private int aliveEnemyCount;
+    private int spawnTargetCount;
+    private int nextSpawnIndex;
+    private int currentWave;
+    private List<EnemyData> availableEnemies;
+    private Player player;
+    private TimePanel timePanel;
+
+    private void Awake()
+    {
+        player = FindFirstObjectByType<Player>();
+        timePanel = FindFirstObjectByType<TimePanel>();
+    }
 
     private void OnEnable()
     {
@@ -41,11 +54,25 @@ public class StageManager : MonoBehaviour
         {
             StartRound();
             yield return WaitForRoundEnd();
+
+            if (currentRound < totalRounds)
+            {
+                GameStateManager.Instance.EnterRoundTransitionState();
+            }
+
+            BloodPickup.CollectAll(player);
             AdvanceRound();
 
             if (currentRound <= totalRounds)
             {
+                yield return new WaitForSeconds(cardPopupDelay);
                 UIManager.Instance.ShowPopupCard();
+
+                if (!UIManager.Instance.IsPopupCardOpen)
+                {
+                    GameStateManager.Instance.EnterPlayingState();
+                }
+
                 yield return new WaitUntil(() => !UIManager.Instance.IsPopupCardOpen);
             }
         }
@@ -55,26 +82,35 @@ public class StageManager : MonoBehaviour
 
     private void StartRound()
     {
+        timePanel.UpdateDisplay(currentRound, GetCurrentRoundDuration());
+
         if (AbilityManager.Instance.DisableEnemySpawning)
         {
             return;
         }
 
-        var wave = GetCurrentWave();
+        currentWave = GetCurrentWave();
         var roundSquare = currentRound * currentRound;
-        var spawnCount = roundSquare + 1 + AbilityManager.Instance.AdditionalEnemyCount;
-        var availableEnemies = GetAvailableEnemies(wave);
+        spawnTargetCount = roundSquare + 1 + AbilityManager.Instance.AdditionalEnemyCount;
+        availableEnemies = GetAvailableEnemies(currentWave);
+        nextSpawnIndex = 0;
 
-        for (var i = 0; i < spawnCount; i++)
+        SpawnEnemiesToTarget();
+
+        Debug.Log($"Round {currentRound} started: {spawnTargetCount} active enemies / wave {currentWave}");
+    }
+
+    private void SpawnEnemiesToTarget()
+    {
+        while (aliveEnemyCount < spawnTargetCount)
         {
-            var spawnPosition = GetSpawnPosition(i, spawnCount);
-            var enemyData = availableEnemies[(wave + i) % availableEnemies.Count];
+            var spawnPosition = GetSpawnPosition(nextSpawnIndex, spawnTargetCount);
+            var enemyData = availableEnemies[(currentWave + nextSpawnIndex) % availableEnemies.Count];
             var enemy = Instantiate(enemyData.Prefab, spawnPosition, Quaternion.identity);
-            enemy.Initialize(enemyData, wave);
+            enemy.Initialize(enemyData, currentWave);
             aliveEnemyCount++;
+            nextSpawnIndex++;
         }
-
-        Debug.Log($"Round {currentRound} started: {spawnCount} enemies / wave {wave}");
     }
 
     private IEnumerator WaitForRoundEnd()
@@ -84,14 +120,20 @@ public class StageManager : MonoBehaviour
 
         while (elapsed < roundDuration)
         {
-            if (aliveEnemyCount <= 0)
+            timePanel.UpdateDisplay(currentRound, roundDuration - elapsed);
+
+            if (!AbilityManager.Instance.DisableEnemySpawning)
             {
-                yield break;
+                SpawnEnemiesToTarget();
             }
 
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        timePanel.UpdateDisplay(currentRound, 0f);
+        Enemy.RemoveAll();
+        aliveEnemyCount = 0;
     }
 
     private Vector3 GetSpawnPosition(int spawnIndex, int spawnCount)

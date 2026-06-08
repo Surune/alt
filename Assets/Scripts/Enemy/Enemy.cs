@@ -116,6 +116,15 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public static void RemoveAll()
+    {
+        var snapshot = ActiveEnemies.ToArray();
+        for (var i = 0; i < snapshot.Length; i++)
+        {
+            Destroy(snapshot[i].gameObject);
+        }
+    }
+
     public static void SlowAll(float coefficient, float duration)
     {
         for (var i = 0; i < ActiveEnemies.Count; i++)
