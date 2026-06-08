@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
@@ -123,18 +124,7 @@ public class StageManager : MonoBehaviour
 
     private List<EnemyData> GetAvailableEnemies(int wave)
     {
-        var availableEnemies = new List<EnemyData>();
-
-        for (var i = 0; i < enemyCatalog.Length; i++)
-        {
-            var enemyData = enemyCatalog[i];
-            if (enemyData.StartWave <= wave)
-            {
-                availableEnemies.Add(enemyData);
-            }
-        }
-
-        return availableEnemies;
+        return enemyCatalog.Where(enemyData => enemyData.StartWave <= wave).ToList();
     }
 
     private void HandleAgentOnDeath(Enemy deadEnemy)

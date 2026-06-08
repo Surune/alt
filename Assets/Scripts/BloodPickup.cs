@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BloodPickup : MonoBehaviour
 {
     public static event System.Action<Player> OnCollected;
-    private static readonly System.Collections.Generic.List<BloodPickup> ActivePickups = new();
+    private static readonly List<BloodPickup> ActivePickups = new();
 
     [SerializeField] private int healAmount = 1;
     [SerializeField] private float mergeDistance = 0.28f;
@@ -17,9 +18,8 @@ public class BloodPickup : MonoBehaviour
 
     public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation, int amount)
     {
-        for (var i = 0; i < ActivePickups.Count; i++)
+        foreach (var activePickup in ActivePickups)
         {
-            var activePickup = ActivePickups[i];
             var offset = activePickup.transform.position - position;
             offset.y = 0f;
             if (offset.sqrMagnitude > activePickup.mergeDistance * activePickup.mergeDistance)

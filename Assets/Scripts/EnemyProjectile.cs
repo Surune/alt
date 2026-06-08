@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
@@ -6,7 +7,7 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private Collider shotCollider;
     [SerializeField] private int damage = 1;
 
-    private static readonly System.Collections.Generic.List<EnemyProjectile> ActiveProjectiles = new();
+    private static readonly List<EnemyProjectile> ActiveProjectiles = new();
 
     private Vector3 direction;
     private Vector3 startPosition;

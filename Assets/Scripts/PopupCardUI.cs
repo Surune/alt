@@ -44,9 +44,8 @@ public class PopupCardUI : MonoBehaviour
         var localization = new Dictionary<string, string>();
         var rows = CSVReader.Read("localization");
 
-        for (var i = 0; i < rows.Count; i++)
+        foreach (var row in rows)
         {
-            var row = rows[i];
             localization.Add((string)row["lkey"], row[locale].ToString());
         }
 
