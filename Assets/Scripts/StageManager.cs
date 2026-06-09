@@ -11,6 +11,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private float[] roundDurations = { 15f };
     [SerializeField] private float spawnInnerRadius = 3.5f;
     [SerializeField] private float spawnOuterRadius = 4.75f;
+    [SerializeField] private float minSpawnInterval = 0.5f;
+    [SerializeField] private float maxSpawnInterval = 1.5f;
 
     private int currentRound = 1;
     private int aliveEnemyCount;
@@ -104,12 +106,7 @@ public class StageManager : MonoBehaviour
     {
         while (aliveEnemyCount < spawnTargetCount)
         {
-            var spawnPosition = GetSpawnPosition(nextSpawnIndex, spawnTargetCount);
-            var enemyData = availableEnemies[(currentWave + nextSpawnIndex) % availableEnemies.Count];
-            var enemy = Instantiate(enemyData.Prefab, spawnPosition, Quaternion.identity);
-            enemy.Initialize(enemyData, currentWave);
-            aliveEnemyCount++;
-            nextSpawnIndex++;
+            SpawnEnemy();
         }
     }
 
@@ -117,14 +114,20 @@ public class StageManager : MonoBehaviour
     {
         var elapsed = 0f;
         var roundDuration = GetCurrentRoundDuration();
+        var nextSpawnTime = Random.Range(minSpawnInterval, maxSpawnInterval);
 
         while (elapsed < roundDuration)
         {
             timePanel.UpdateDisplay(currentRound, roundDuration - elapsed);
 
-            if (!AbilityManager.Instance.DisableEnemySpawning)
+            if (elapsed >= nextSpawnTime)
             {
-                SpawnEnemiesToTarget();
+                if (!AbilityManager.Instance.DisableEnemySpawning && aliveEnemyCount < spawnTargetCount)
+                {
+                    SpawnEnemy();
+                }
+
+                nextSpawnTime = elapsed + Random.Range(minSpawnInterval, maxSpawnInterval);
             }
 
             elapsed += Time.deltaTime;
@@ -134,6 +137,16 @@ public class StageManager : MonoBehaviour
         timePanel.UpdateDisplay(currentRound, 0f);
         Enemy.RemoveAll();
         aliveEnemyCount = 0;
+    }
+
+    private void SpawnEnemy()
+    {
+        var spawnPosition = GetSpawnPosition(nextSpawnIndex, spawnTargetCount);
+        var enemyData = availableEnemies[(currentWave + nextSpawnIndex) % availableEnemies.Count];
+        var enemy = Instantiate(enemyData.Prefab, spawnPosition, Quaternion.identity);
+        enemy.Initialize(enemyData, currentWave);
+        aliveEnemyCount++;
+        nextSpawnIndex++;
     }
 
     private Vector3 GetSpawnPosition(int spawnIndex, int spawnCount)

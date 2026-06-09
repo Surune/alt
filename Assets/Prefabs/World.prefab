@@ -135,6 +135,8 @@ MonoBehaviour:
   - 60
   spawnInnerRadius: 3.5
   spawnOuterRadius: 4.75
+  minSpawnInterval: 0.5
+  maxSpawnInterval: 1.5
 --- !u!1 &1436142876806154838
 GameObject:
   m_ObjectHideFlags: 0
