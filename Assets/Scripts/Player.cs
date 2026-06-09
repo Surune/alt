@@ -426,7 +426,7 @@ public class Player : MonoBehaviour
 
     public void FireWingProjectile(Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
     {
-        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         var abilityData = AbilityManager.Instance.CreateWingProjectileData(projectileDamage, homing, freezing);
         shotInstance.Initialize(
             direction.normalized,
@@ -434,25 +434,28 @@ public class Player : MonoBehaviour
             CurrentWeapon.ProjectileRange,
             abilityData
         );
+        shotInstance.gameObject.SetActive(true);
     }
 
     public void FireFatalProjectile(Vector3 direction)
     {
-        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(0f));
         shotInstance.ForceFatal();
+        shotInstance.gameObject.SetActive(true);
     }
 
     public void FireCriticalProjectile(Vector3 direction)
     {
-        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(CurrentWeapon.Damage));
         shotInstance.ForceCritical();
+        shotInstance.gameObject.SetActive(true);
     }
 
     private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
     {
-        var shotInstance = Instantiate(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         var abilityData = AbilityManager.Instance.CreateProjectileData(projectileDamage, pierce, homing);
         shotInstance.Initialize(
             direction.normalized,
@@ -460,6 +463,7 @@ public class Player : MonoBehaviour
             CurrentWeapon.ProjectileRange,
             abilityData
         );
+        shotInstance.gameObject.SetActive(true);
     }
 
     public WeaponData[] GetUnownedWeapons()

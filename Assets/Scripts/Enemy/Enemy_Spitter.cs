@@ -153,7 +153,8 @@ public class Enemy_Spitter : Enemy
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
+        var shot = PoolManager.Instance.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotDirection.normalized, shotSpeed, shotRange);
+        shot.gameObject.SetActive(true);
     }
 }

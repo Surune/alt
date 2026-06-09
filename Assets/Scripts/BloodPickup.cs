@@ -34,8 +34,14 @@ public class BloodPickup : MonoBehaviour
             return;
         }
 
-        var pickup = Instantiate(prefab, position, rotation);
-        pickup.SetHealAmount(amount);
+        var pickup = PoolManager.Instance.GetBloodPickup(prefab, position, rotation);
+        pickup.transform.localScale = Vector3.one;
+        pickup.healAmount = amount;
+        pickup.baseY = position.y;
+        pickup.floatOffset = Random.Range(0f, Mathf.PI * 2f);
+        pickup.collectingPlayer = null;
+        pickup.isCollecting = false;
+        pickup.gameObject.SetActive(true);
     }
 
     public static void CollectAll(Player player)
@@ -47,14 +53,12 @@ public class BloodPickup : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void OnEnable()
     {
-        baseY = transform.position.y;
-        floatOffset = Random.Range(0f, Mathf.PI * 2f);
         ActivePickups.Add(this);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         ActivePickups.Remove(this);
     }
@@ -93,11 +97,6 @@ public class BloodPickup : MonoBehaviour
         healAmount += amount;
     }
 
-    private void SetHealAmount(int amount)
-    {
-        healAmount = amount;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         var player = other.GetComponent<Player>();
@@ -113,6 +112,6 @@ public class BloodPickup : MonoBehaviour
     {
         player.Heal(healAmount);
         OnCollected?.Invoke(player);
-        Destroy(gameObject);
+        PoolManager.Instance.ReleaseBloodPickup(this);
     }
 }

@@ -14,9 +14,11 @@ public class ShotProjectile : MonoBehaviour
     private float maxDistance;
     private ProjectileAbilityData abilityData;
     private int remainingPierce;
+    private bool isActive;
 
     public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, ProjectileAbilityData projectileAbilityData)
     {
+        isActive = true;
         direction = shotDirection;
         startPosition = rb.position;
         speed = shotSpeed;
@@ -39,7 +41,7 @@ public class ShotProjectile : MonoBehaviour
         var distanceVector = rb.position - startPosition;
         if (distanceVector.sqrMagnitude >= maxDistance * maxDistance)
         {
-            Destroy(gameObject);
+            Release();
         }
     }
 
@@ -77,7 +79,7 @@ public class ShotProjectile : MonoBehaviour
                 return;
             }
 
-            Destroy(gameObject);
+            Release();
             return;
         }
 
@@ -85,7 +87,7 @@ public class ShotProjectile : MonoBehaviour
         if (collidedGameObject.CompareTag("Obstacle"))
         {
             SpawnBloodPickup();
-            Destroy(gameObject);
+            Release();
         }
     }
 
@@ -106,5 +108,17 @@ public class ShotProjectile : MonoBehaviour
         bloodPosition.y = 0.02f;
         var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation, 1);
+    }
+
+    private void Release()
+    {
+        if (!isActive)
+        {
+            return;
+        }
+
+        isActive = false;
+        rb.linearVelocity = Vector3.zero;
+        PoolManager.Instance.ReleaseBullet(this);
     }
 }

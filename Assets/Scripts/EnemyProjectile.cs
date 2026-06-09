@@ -13,6 +13,7 @@ public class EnemyProjectile : MonoBehaviour
     private Vector3 startPosition;
     private float speed;
     private float maxDistance;
+    private bool isActive;
 
     private void OnEnable()
     {
@@ -26,6 +27,7 @@ public class EnemyProjectile : MonoBehaviour
 
     public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange)
     {
+        isActive = true;
         direction = shotDirection;
         startPosition = rb.position;
         speed = shotSpeed;
@@ -40,7 +42,7 @@ public class EnemyProjectile : MonoBehaviour
         var distanceVector = rb.position - startPosition;
         if (distanceVector.sqrMagnitude >= maxDistance * maxDistance)
         {
-            Destroy(gameObject);
+            Release();
         }
     }
 
@@ -49,14 +51,14 @@ public class EnemyProjectile : MonoBehaviour
         if (collision.gameObject.TryGetComponent<Player>(out var player))
         {
             player.TakeDamage(damage);
-            Destroy(gameObject);
+            Release();
             return;
         }
 
         var collidedGameObject = collision.gameObject;
         if (collidedGameObject.CompareTag("Obstacle"))
         {
-            Destroy(gameObject);
+            Release();
         }
     }
 
@@ -64,7 +66,19 @@ public class EnemyProjectile : MonoBehaviour
     {
         for (var i = ActiveProjectiles.Count - 1; i >= 0; i--)
         {
-            Destroy(ActiveProjectiles[i].gameObject);
+            ActiveProjectiles[i].Release();
         }
+    }
+
+    private void Release()
+    {
+        if (!isActive)
+        {
+            return;
+        }
+
+        isActive = false;
+        rb.linearVelocity = Vector3.zero;
+        PoolManager.Instance.ReleaseEnemyShot(this);
     }
 }
