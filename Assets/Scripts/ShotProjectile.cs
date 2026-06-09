@@ -15,8 +15,9 @@ public class ShotProjectile : MonoBehaviour
     private ProjectileAbilityData abilityData;
     private int remainingPierce;
     private bool isActive;
+    private bool dropsBloodPickup;
 
-    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, ProjectileAbilityData projectileAbilityData)
+    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange, ProjectileAbilityData projectileAbilityData, bool dropsBloodPickup)
     {
         isActive = true;
         direction = shotDirection;
@@ -26,6 +27,7 @@ public class ShotProjectile : MonoBehaviour
         abilityData = projectileAbilityData;
         damage = abilityData.Damage;
         remainingPierce = abilityData.Pierce;
+        this.dropsBloodPickup = dropsBloodPickup;
         rb.linearVelocity = direction * speed;
     }
 
@@ -71,7 +73,11 @@ public class ShotProjectile : MonoBehaviour
             }
 
             AbilityManager.Instance.OnProjectileHit(enemy, abilityData);
-            SpawnBloodPickup();
+            if (dropsBloodPickup)
+            {
+                SpawnBloodPickup();
+            }
+
             if (remainingPierce > 0)
             {
                 remainingPierce--;
@@ -86,7 +92,11 @@ public class ShotProjectile : MonoBehaviour
         var collidedGameObject = collision.gameObject;
         if (collidedGameObject.CompareTag("Obstacle"))
         {
-            SpawnBloodPickup();
+            if (dropsBloodPickup)
+            {
+                SpawnBloodPickup();
+            }
+
             Release();
         }
     }

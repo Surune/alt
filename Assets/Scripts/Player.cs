@@ -235,11 +235,11 @@ public class Player : MonoBehaviour
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        FireProjectile(shotDirection, CurrentWeapon.Damage, 0, false);
+        FireProjectile(shotDirection, CurrentWeapon.Damage, 0, false, true);
         if (AbilityManager.Instance.Awaken)
         {
-            FireProjectile(Quaternion.AngleAxis(-8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false);
-            FireProjectile(Quaternion.AngleAxis(8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false);
+            FireProjectile(Quaternion.AngleAxis(-8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false, false);
+            FireProjectile(Quaternion.AngleAxis(8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false, false);
         }
     }
 
@@ -399,7 +399,7 @@ public class Player : MonoBehaviour
 
     public void FireAbilityProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
     {
-        FireProjectile(direction, projectileDamage, pierce, homing);
+        FireProjectile(direction, projectileDamage, pierce, homing, false);
     }
 
     public void FireWingProjectile(Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
@@ -410,7 +410,8 @@ public class Player : MonoBehaviour
             direction.normalized,
             AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed) * speedCoefficient,
             CurrentWeapon.ProjectileRange,
-            abilityData
+            abilityData,
+            false
         );
         shotInstance.gameObject.SetActive(true);
     }
@@ -418,7 +419,7 @@ public class Player : MonoBehaviour
     public void FireFatalProjectile(Vector3 direction)
     {
         var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(0f));
+        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(0f), false);
         shotInstance.ForceFatal();
         shotInstance.gameObject.SetActive(true);
     }
@@ -426,12 +427,12 @@ public class Player : MonoBehaviour
     public void FireCriticalProjectile(Vector3 direction)
     {
         var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(CurrentWeapon.Damage));
+        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(CurrentWeapon.Damage), false);
         shotInstance.ForceCritical();
         shotInstance.gameObject.SetActive(true);
     }
 
-    private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
+    private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing, bool dropsBloodPickup)
     {
         var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
         var abilityData = AbilityManager.Instance.CreateProjectileData(projectileDamage, pierce, homing);
@@ -439,7 +440,8 @@ public class Player : MonoBehaviour
             direction.normalized,
             AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed),
             CurrentWeapon.ProjectileRange,
-            abilityData
+            abilityData,
+            dropsBloodPickup
         );
         shotInstance.gameObject.SetActive(true);
     }
