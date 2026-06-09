@@ -368,6 +368,18 @@ public class Player : MonoBehaviour
         NotifyHealthChanged();
     }
 
+    public bool CanSpendMaxHealth(int amount)
+    {
+        return maxHealth > amount;
+    }
+
+    public void SpendMaxHealth(int amount)
+    {
+        maxHealth -= amount;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        NotifyHealthChanged();
+    }
+
     public void ChangeMaxHealthByPercent(float percent)
     {
         maxHealth += Mathf.RoundToInt(maxHealth * percent);

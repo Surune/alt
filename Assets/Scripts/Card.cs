@@ -21,24 +21,36 @@ public class Card : MonoBehaviour, IPointerMoveHandler, IPointerDownHandler, IPo
     [SerializeField] private Image icon;
     [SerializeField] private TMP_Text cardName;
     [SerializeField] private TMP_Text cardDescription;
+    [SerializeField] private TMP_Text cardCostText;
 
     private Action clickAction;
+    private CanvasGroup canvasGroup;
     private Material foilMat;
     private Quaternion targetRotation;
 
     private void Awake()
     {
         targetRotation = Quaternion.identity;
+        canvasGroup = cardRoot.gameObject.AddComponent<CanvasGroup>();
 
         foilMat = Instantiate(foilOverlay.material);
         foilOverlay.material = foilMat;
     }
 
-    public void Init(AbilityData data, string displayName, string description)
+    public void Init(AbilityData data, string displayName, string description, int costText, Action action)
     {
         icon.sprite = data.Icon;
         cardName.text = displayName;
         cardDescription.text = description;
+        cardCostText.text = $"-{costText}";
+        clickAction = action;
+    }
+
+    public void Empty()
+    {
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
     }
 
     private void Update()
@@ -82,10 +94,5 @@ public class Card : MonoBehaviour, IPointerMoveHandler, IPointerDownHandler, IPo
     {
         targetRotation = Quaternion.identity;
         foilMat.SetFloat("_Opacity", 0f);
-    }
-
-    public void SetClickAction(Action action)
-    {
-        clickAction = action;
     }
 }
