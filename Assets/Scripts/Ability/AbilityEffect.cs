@@ -57,14 +57,13 @@ public class AbilityEffect
             case AbilityEffectKind.HPBool:
                 context.AbilityManager.SetHealthFlag(hpBoolStat, enabledValue);
                 break;
-            case AbilityEffectKind.ChangeHP:
-                context.Player.ChangeMaxHealthByPercent(-amount * 0.01f);
+            case AbilityEffectKind.ReduceHealthByPercent:
+                context.Player.ReduceHealthByPercent(amount * 0.01f);
                 break;
-            case AbilityEffectKind.ChangeHPValues:
-                context.Player.ChangeHealthScale(value, secondValue);
+            case AbilityEffectKind.ScaleHealth:
+                context.Player.ScaleHealth(value);
                 break;
-            case AbilityEffectKind.RefreshHealthBar:
-                context.Player.HealToFull();
+            case AbilityEffectKind.NoHealthEffect:
                 break;
             case AbilityEffectKind.Timer:
                 context.AbilityManager.ChangeTimer(amount);

@@ -418,7 +418,7 @@ public class AbilityManager : MonoBehaviour
         }
         if (berserk)
         {
-            totalDamage *= 1f + (1f - player.CurrentHealth / (float)player.MaxHealth);
+            totalDamage *= 1f + 1f / player.CurrentHealth;
         }
 
         if (beingstronger)

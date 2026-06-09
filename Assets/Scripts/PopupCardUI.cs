@@ -7,7 +7,7 @@ public class PopupCardUI : MonoBehaviour
 {
     [SerializeField] private Transform cardRoot;
     [SerializeField] private Card cardPrefab;
-    [SerializeField] private int refreshMaxHealthCost = 1;
+    [SerializeField] private int refreshHealthCost = 1;
 
     private readonly List<Card> cards = new();
     private readonly HashSet<int> offeredAbilityIds = new();
@@ -72,7 +72,7 @@ public class PopupCardUI : MonoBehaviour
             card.Init(ability,
                 localization[nameLkey],
                 localization[descriptionLkey],
-                ability.MaxHealthCost,
+                ability.HealthCost,
                 () => PurchaseAbility(ability, card));
             cards.Add(card);
             offeredAbilityIds.Add(ability.AbilityID);
@@ -97,12 +97,12 @@ public class PopupCardUI : MonoBehaviour
 
     private void PurchaseAbility(AbilityData ability, Card card)
     {
-        if (!player.CanSpendMaxHealth(ability.MaxHealthCost))
+        if (!player.CanSpendHealth(ability.HealthCost))
         {
             return;
         }
 
-        player.SpendMaxHealth(ability.MaxHealthCost);
+        player.SpendHealth(ability.HealthCost);
         abilityManager.AddAbility(ability);
         offeredAbilityIds.Remove(ability.AbilityID);
         card.Empty();
@@ -111,12 +111,12 @@ public class PopupCardUI : MonoBehaviour
 
     private void Refresh()
     {
-        if (!player.CanSpendMaxHealth(refreshMaxHealthCost))
+        if (!player.CanSpendHealth(refreshHealthCost))
         {
             return;
         }
 
-        player.SpendMaxHealth(refreshMaxHealthCost);
+        player.SpendHealth(refreshHealthCost);
         PopulateCards(true);
     }
 
@@ -191,9 +191,9 @@ public class PopupCardUI : MonoBehaviour
     {
         var korean = Application.systemLanguage == SystemLanguage.Korean;
         refreshButtonText.text = korean
-            ? $"새로고침\n최대체력 -{refreshMaxHealthCost}"
-            : $"Refresh\nMax HP -{refreshMaxHealthCost}";
-        refreshButton.interactable = player.CanSpendMaxHealth(refreshMaxHealthCost)
+            ? $"새로고침\n체력 -{refreshHealthCost}"
+            : $"Refresh\nHP -{refreshHealthCost}";
+        refreshButton.interactable = player.CanSpendHealth(refreshHealthCost)
                                      && abilityManager.GetUnselectedAbilities().Length > 0;
     }
 

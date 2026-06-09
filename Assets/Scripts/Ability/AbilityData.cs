@@ -9,7 +9,7 @@ public class AbilityData : ScriptableObject
     [SerializeField] Sprite icon;
     [SerializeField] int primarySynergy;
     [SerializeField] int secondarySynergy;
-    [SerializeField] int maxHealthCost = 2;
+    [SerializeField] int healthCost = 2;
     [SerializeField] List<AbilityEffect> effects = new List<AbilityEffect>();
 
     public int AbilityID => abilityID;
@@ -17,7 +17,7 @@ public class AbilityData : ScriptableObject
     public Sprite Icon => icon;
     public int PrimarySynergy => primarySynergy;
     public int SecondarySynergy => secondarySynergy;
-    public int MaxHealthCost => maxHealthCost;
+    public int HealthCost => healthCost;
 
     public void Apply(AbilityApplyContext context)
     {

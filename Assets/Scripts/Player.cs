@@ -7,14 +7,14 @@ using Random = UnityEngine.Random;
 public class Player : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
-    public static event Action<int, int> HealthChanged;
+    public static event Action<int> HealthChanged;
 
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private InputActionReference rollAction;
-    [SerializeField] private int maxHealth = 25;
+    [SerializeField] private int startingHealth = 25;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float speed = 4.5f;
     [SerializeField] private float rollDuration = 0.3f;
@@ -39,7 +39,6 @@ public class Player : MonoBehaviour
     private float movedDistance;
 
     public int CurrentHealth => currentHealth;
-    public int MaxHealth => maxHealth;
     
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
     private bool IsRolling => Time.time < rollEndTime;
@@ -49,7 +48,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         cam = Camera.main;
-        currentHealth = maxHealth;
+        currentHealth = startingHealth;
         lastPosition = rb.position;
         NotifyHealthChanged();
     }
@@ -348,11 +347,6 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth += amount;
-        if (currentHealth > maxHealth)
-        {
-            currentHealth = maxHealth;
-        }
-
         NotifyHealthChanged();
     }
 
@@ -361,42 +355,26 @@ public class Player : MonoBehaviour
         barrier += amount;
     }
 
-    public void ChangeMaxHealth(int amount)
+    public bool CanSpendHealth(int amount)
     {
-        maxHealth += amount;
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        return currentHealth > amount;
+    }
+
+    public void SpendHealth(int amount)
+    {
+        currentHealth -= amount;
         NotifyHealthChanged();
     }
 
-    public bool CanSpendMaxHealth(int amount)
+    public void ReduceHealthByPercent(float percent)
     {
-        return maxHealth > amount;
-    }
-
-    public void SpendMaxHealth(int amount)
-    {
-        maxHealth -= amount;
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        currentHealth -= Mathf.RoundToInt(currentHealth * percent);
         NotifyHealthChanged();
     }
 
-    public void ChangeMaxHealthByPercent(float percent)
+    public void ScaleHealth(float scale)
     {
-        maxHealth += Mathf.RoundToInt(maxHealth * percent);
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
-        NotifyHealthChanged();
-    }
-
-    public void ChangeHealthScale(float maxHealthScale, float healthScale)
-    {
-        maxHealth = Mathf.CeilToInt(maxHealth * maxHealthScale);
-        currentHealth = Mathf.CeilToInt(currentHealth * healthScale);
-        NotifyHealthChanged();
-    }
-
-    public void HealToFull()
-    {
-        currentHealth = maxHealth;
+        currentHealth = Mathf.CeilToInt(currentHealth * scale);
         NotifyHealthChanged();
     }
 
@@ -502,6 +480,6 @@ public class Player : MonoBehaviour
 
     private void NotifyHealthChanged()
     {
-        HealthChanged?.Invoke(currentHealth, maxHealth);
+        HealthChanged?.Invoke(currentHealth);
     }
 }

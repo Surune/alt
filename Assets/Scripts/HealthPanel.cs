@@ -1,10 +1,8 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class HealthPanel : MonoBehaviour
 {
-    [SerializeField] private Slider gauge;
     [SerializeField] private TMP_Text healthText;
 
     private void OnEnable()
@@ -15,7 +13,7 @@ public class HealthPanel : MonoBehaviour
     private void Start()
     {
         var player = FindFirstObjectByType<Player>();
-        HandleHealthChanged(player.CurrentHealth, player.MaxHealth);
+        HandleHealthChanged(player.CurrentHealth);
     }
 
     private void OnDisable()
@@ -23,9 +21,8 @@ public class HealthPanel : MonoBehaviour
         Player.HealthChanged -= HandleHealthChanged;
     }
 
-    private void HandleHealthChanged(int currentHealth, int maxHealth)
+    private void HandleHealthChanged(int currentHealth)
     {
-        gauge.value = (float)currentHealth / maxHealth;
-        healthText.text = $"{currentHealth}/{maxHealth}";
+        healthText.text = currentHealth.ToString();
     }
 }

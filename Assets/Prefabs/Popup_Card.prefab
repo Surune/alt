@@ -255,4 +255,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardRoot: {fileID: 1590021713921808999}
   cardPrefab: {fileID: 433163546163867781, guid: 027a31d94459339488e88e1eff728e0d, type: 3}
-  refreshMaxHealthCost: 1
+  refreshHealthCost: 1
