@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 3955425418833704279}
-  shotCollider: {fileID: 0}
+  shotCollider: {fileID: 2182618304697715580}
   damage: 1
   bloodPickupPrefab: {fileID: 4277246807266260747, guid: f63227d5a47d44628f91c57710fc8ae0, type: 3}
 --- !u!1001 &6250694643532970837
