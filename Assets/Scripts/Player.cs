@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
     public static event Action<int> HealthChanged;
+    public static event Action Damaged;
 
     [SerializeField] private Rigidbody rb;
     [SerializeField] private InputActionReference moveAction;
@@ -273,6 +274,7 @@ public class Player : MonoBehaviour
         currentHealth -= Mathf.CeilToInt(damage);
         AbilityManager.Instance.OnPlayerDamaged(damage);
         damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
+        Damaged?.Invoke();
         NotifyHealthChanged();
         if (currentHealth <= 0)
         {
