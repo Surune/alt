@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   SynergyColors: []
+  wingPrefab: {fileID: 6435278410058332641, guid: a856278cbd9e53348a63361e93ca8534, type: 3}
 --- !u!1001 &7596266864359351710
 PrefabInstance:
   m_ObjectHideFlags: 0

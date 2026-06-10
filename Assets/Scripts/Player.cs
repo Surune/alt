@@ -397,14 +397,21 @@ public class Player : MonoBehaviour
         return GetDirectionTo(Enemy.GetNearestPosition(rb.position));
     }
 
+    public Vector3 GetNearestEnemyDirection(Vector3 origin)
+    {
+        var direction = Enemy.GetNearestPosition(origin) - origin;
+        direction.y = 0f;
+        return direction.normalized;
+    }
+
     public void FireAbilityProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing)
     {
         FireProjectile(direction, projectileDamage, pierce, homing, false);
     }
 
-    public void FireWingProjectile(Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
+    public void FireWingProjectile(Vector3 origin, Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
     {
-        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, origin, Quaternion.identity);
         var abilityData = AbilityManager.Instance.CreateWingProjectileData(projectileDamage, homing, freezing);
         shotInstance.Initialize(
             direction.normalized,

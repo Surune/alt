@@ -9,6 +9,7 @@ public class AbilityManager : MonoBehaviour
 
     [HideInInspector] public int[] Synergy;
     public Color[] SynergyColors;
+    [SerializeField] Wing wingPrefab;
 
     public bool assassination = false;
     public bool penetrate = false;
@@ -98,7 +99,6 @@ public class AbilityManager : MonoBehaviour
     bool allTargetShot;
     bool canFire = true;
     float lastPlayerMoveDistance;
-    float nextWingShotTime;
     int projectileCount;
     int criticalHitCount;
 
@@ -115,6 +115,11 @@ public class AbilityManager : MonoBehaviour
     public bool Awaken => awaken;
     public bool Fracture => fracture;
     public float BossFatalDamage => bossFatalDamage;
+    public float WingDamage => wingDamage;
+    public float WingSpeed => wingSpeed;
+    public float WingCooldown => wingCooldown;
+    public bool WingHoming => wingHoming;
+    public bool WingFreezing => wingFreezing;
 
     private void Awake()
     {
@@ -153,15 +158,6 @@ public class AbilityManager : MonoBehaviour
 
             nextPeriodicTimes[pair.Key] = Time.time + pair.Value;
             TriggerPeriodicAbility(pair.Key);
-        }
-
-        if (wingCount > 0 && Time.time >= nextWingShotTime)
-        {
-            nextWingShotTime = Time.time + wingCooldown;
-            for (var i = 0; i < wingCount; i++)
-            {
-                player.FireWingProjectile(player.GetNearestEnemyDirection(), wingDamage, wingSpeed, wingHoming, wingFreezing);
-            }
         }
 
         if (beingstronger)
@@ -352,7 +348,15 @@ public class AbilityManager : MonoBehaviour
     }
 
     public void AddRefresh(int amount) => refreshCount += amount;
-    public void AddWings(int amount) => wingCount += amount;
+    public void AddWings(int amount)
+    {
+        wingCount += amount;
+
+        for (var i = 0; i < amount; i++)
+        {
+            Instantiate(wingPrefab, player.transform).Initialize(player);
+        }
+    }
     public void ChangeTimer(int amount) => additionalEnemyCount += amount;
     public void ChangeExperienceRequirement(int amount) => experienceRequirementOffset += amount;
     public void ChangeCoinCoefficient(float value) => coinCoefficient += value;
