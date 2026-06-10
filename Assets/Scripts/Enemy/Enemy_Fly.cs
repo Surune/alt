@@ -15,7 +15,7 @@ public class Enemy_Fly : Enemy
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
         }
@@ -87,7 +87,7 @@ public class Enemy_Fly : Enemy
     {
         var angle = Random.Range(0f, 360f);
         var shotDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
-        var shot = PoolManager.Instance.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
+        var shot = GameManager.Instance.Pool.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotDirection, shotSpeed, shotRange);
         shot.gameObject.SetActive(true);
     }

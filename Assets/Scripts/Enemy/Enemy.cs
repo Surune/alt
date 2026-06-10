@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
         bloodDropAmount = enemyData.BloodDropAmount;
         baseContactDamage = enemyData.Damage + (enemyData.DamageIncreasePerWave * waveOffset);
         baseMoveSpeed = enemyData.MoveSpeed;
-        var abilityManager = AbilityManager.Instance;
+        var abilityManager = GameManager.Instance.Ability;
         baseMaxHealth += abilityManager.EnemyHealthOffset;
         baseContactDamage *= abilityManager.EnemyDamageCoefficient;
         baseMoveSpeed *= abilityManager.EnemySpeedCoefficient;

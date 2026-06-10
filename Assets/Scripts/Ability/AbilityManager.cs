@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class AbilityManager : MonoBehaviour
+public sealed class AbilityManager
 {
-    public static AbilityManager Instance { get; private set; }
-
-    [HideInInspector] public int[] Synergy;
-    public Color[] SynergyColors;
-    [SerializeField] Wing wingPrefab;
+    public int[] Synergy;
 
     public bool assassination = false;
     public bool penetrate = false;
@@ -98,6 +94,7 @@ public class AbilityManager : MonoBehaviour
     bool celestialShot;
     bool allTargetShot;
     bool canFire = true;
+    float rearmEndTime;
     float lastPlayerMoveDistance;
     int projectileCount;
     int criticalHitCount;
@@ -121,32 +118,35 @@ public class AbilityManager : MonoBehaviour
     public bool WingHoming => wingHoming;
     public bool WingFreezing => wingFreezing;
 
-    private void Awake()
+    private readonly Wing wingPrefab;
+
+    public AbilityManager(Player player, Wing wingPrefab)
     {
-        Instance = this;
-        player = FindFirstObjectByType<Player>();
+        this.player = player;
+        this.wingPrefab = wingPrefab;
         abilityCatalog = Resources.LoadAll<AbilityData>("Abilities");
         Synergy = new int[11];
         CacheFlagSetters();
-    }
-
-    private void OnEnable()
-    {
         Enemy.OnDeath += HandleEnemyDeath;
         BloodPickup.OnCollected += HandleItemCollected;
     }
 
-    private void OnDisable()
+    public void Dispose()
     {
         Enemy.OnDeath -= HandleEnemyDeath;
         BloodPickup.OnCollected -= HandleItemCollected;
     }
 
-    private void Update()
+    public void Tick()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
+        }
+
+        if (!canFire && Time.time >= rearmEndTime)
+        {
+            canFire = true;
         }
 
         foreach (var pair in periodicIntervals)
@@ -354,7 +354,7 @@ public class AbilityManager : MonoBehaviour
 
         for (var i = 0; i < amount; i++)
         {
-            Instantiate(wingPrefab, player.transform).Initialize(player);
+            UnityEngine.Object.Instantiate(wingPrefab, player.transform).Initialize(player);
         }
     }
     public void ChangeTimer(int amount) => additionalEnemyCount += amount;
@@ -585,7 +585,7 @@ public class AbilityManager : MonoBehaviour
             case 70: criticalCoefficient += 0.025f; break;
             case 77: FireHomingProjectiles(3, 1f); break;
             case 79: player.FireAbilityProjectile(player.GetNearestEnemyDirection(), 3f, 1, false); break;
-            case 80: StartCoroutine(Rearm()); break;
+            case 80: Rearm(); break;
             case 84: damage += 0.1f; break;
             case 91: DamageAllEnemies(GetCurrentDamage(1f)); break;
             case 96: player.FireAbilityProjectile(player.GetNearestEnemyDirection(), GetCurrentDamage(2f), 0, false); break;
@@ -595,11 +595,10 @@ public class AbilityManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator Rearm()
+    private void Rearm()
     {
         canFire = false;
-        yield return new WaitForSeconds(0.5f);
-        canFire = true;
+        rearmEndTime = Time.time + 0.5f;
     }
 
     private void FireRadialProjectiles(int count, float projectileDamage)
@@ -637,7 +636,7 @@ public class AbilityManager : MonoBehaviour
     private Ability CreateAbility(AbilityData abilityData)
     {
         var abilityObject = new GameObject(abilityData.name);
-        abilityObject.transform.SetParent(transform);
+        abilityObject.transform.SetParent(player.transform);
         var ability = abilityObject.AddComponent<Ability>();
         ability.AbilityID = abilityData.AbilityID;
         ability.AbilityType = abilityData.AbilityType;

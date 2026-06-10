@@ -11,7 +11,7 @@ public class Enemy_Baby : Enemy
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
         }

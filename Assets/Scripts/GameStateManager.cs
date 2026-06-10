@@ -8,59 +8,48 @@ public enum GameState
     CardPopup
 }
 
-public class GameStateManager : MonoBehaviour
+public sealed class GameStateManager
 {
-    public static GameStateManager Instance { get; private set; }
-
     public event Action<GameState> StateChanged;
 
-    public GameState CurrentState { get; private set; } = GameState.Playing;
-    public bool IsGameplayActive => CurrentState == GameState.Playing;
+    public bool IsGameplayActive => currentState == GameState.Playing;
+    private GameState currentState;
 
-    private void Awake()
+    public GameStateManager()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            ApplyTimeScale();
-            return;
-        }
-
-        Destroy(gameObject);
+        currentState = GameState.Playing;
+        ApplyTimeScale();
     }
 
     public void EnterPlayingState()
     {
-        CurrentState = GameState.Playing;
+        currentState = GameState.Playing;
         ApplyTimeScale();
-        StateChanged?.Invoke(CurrentState);
+        StateChanged?.Invoke(currentState);
     }
 
     public void EnterCardPopupState()
     {
-        CurrentState = GameState.CardPopup;
+        currentState = GameState.CardPopup;
         ApplyTimeScale();
-        StateChanged?.Invoke(CurrentState);
+        StateChanged?.Invoke(currentState);
     }
 
     public void EnterRoundTransitionState()
     {
-        CurrentState = GameState.RoundTransition;
+        currentState = GameState.RoundTransition;
         ApplyTimeScale();
-        StateChanged?.Invoke(CurrentState);
+        StateChanged?.Invoke(currentState);
     }
 
     private void ApplyTimeScale()
     {
-        Time.timeScale = CurrentState == GameState.CardPopup ? 0f : 1f;
+        Time.timeScale = currentState == GameState.CardPopup ? 0f : 1f;
     }
 
-    private void OnDestroy()
+    public void Dispose()
     {
-        if (Instance == this)
-        {
-            Time.timeScale = 1f;
-            Instance = null;
-        }
+        Time.timeScale = 1f;
+        StateChanged = null;
     }
 }

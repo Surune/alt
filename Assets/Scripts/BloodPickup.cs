@@ -34,7 +34,7 @@ public class BloodPickup : MonoBehaviour
             return;
         }
 
-        var pickup = PoolManager.Instance.GetBloodPickup(prefab, position, rotation);
+        var pickup = GameManager.Instance.Pool.GetBloodPickup(prefab, position, rotation);
         pickup.transform.localScale = Vector3.one;
         pickup.healAmount = amount;
         pickup.baseY = position.y;
@@ -112,6 +112,6 @@ public class BloodPickup : MonoBehaviour
     {
         player.Heal(healAmount);
         OnCollected?.Invoke(player);
-        PoolManager.Instance.ReleaseBloodPickup(this);
+        GameManager.Instance.Pool.ReleaseBloodPickup(this);
     }
 }

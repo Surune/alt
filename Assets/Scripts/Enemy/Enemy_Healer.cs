@@ -20,7 +20,7 @@ public class Enemy_Healer : Enemy
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
         }

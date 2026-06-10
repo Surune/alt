@@ -21,12 +21,12 @@ public class Wing : MonoBehaviour
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive || Time.time < nextShotTime)
+        if (!GameManager.Instance.GameState.IsGameplayActive || Time.time < nextShotTime)
         {
             return;
         }
 
-        var abilityManager = AbilityManager.Instance;
+        var abilityManager = GameManager.Instance.Ability;
         nextShotTime = Time.time + abilityManager.WingCooldown;
         var origin = transform.position;
         player.FireWingProjectile(

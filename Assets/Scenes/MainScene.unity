@@ -256,10 +256,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1700000001}
-  - component: {fileID: 1700000002}
+  - component: {fileID: 1700000007}
   - component: {fileID: 1700000003}
   - component: {fileID: 1700000005}
-  - component: {fileID: 1700000006}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -282,7 +281,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1700000002
+--- !u!114 &1700000007
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -291,9 +290,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1700000000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20a2fdfd4c6b4fd69a424b3a49352575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: ed7b5d86ece849e385926da35925805e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  wingPrefab: {fileID: 6435278410058332641, guid: a856278cbd9e53348a63361e93ca8534, type: 3}
 --- !u!114 &1700000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,18 +327,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e2af83b5d59f49a88cc4ec4a227ff37b, type: 2}
   - {fileID: 11400000, guid: 9f1b52fc78654ce8b483a75f8c0dc7af, type: 2}
   - {fileID: 11400000, guid: bcf2d7c5331748238d1038c43ec4d159, type: 2}
---- !u!114 &1700000006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700000000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 282f295956ad4d7caf52bad26879dcc3, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
 --- !u!1001 &2653829412605370674
 PrefabInstance:
   m_ObjectHideFlags: 0

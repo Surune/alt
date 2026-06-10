@@ -47,7 +47,7 @@ public class Boss : Enemy
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
         }
@@ -263,7 +263,7 @@ public class Boss : Enemy
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shot = PoolManager.Instance.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
+        var shot = GameManager.Instance.Pool.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotDirection.normalized, shotSpeed, shotRange);
         shot.gameObject.SetActive(true);
     }

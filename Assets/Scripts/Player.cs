@@ -58,7 +58,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             moveInput = Vector2.zero;
             return;
@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!GameStateManager.Instance.IsGameplayActive)
+        if (!GameManager.Instance.GameState.IsGameplayActive)
         {
             return;
         }
@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
 
         queuedBurstShots = CurrentWeapon.BurstCount;
         FireBurstShot();
-        nextShotTime = Time.time + AbilityManager.Instance.GetFireInterval(CurrentWeapon.FireInterval);
+        nextShotTime = Time.time + GameManager.Instance.Ability.GetFireInterval(CurrentWeapon.FireInterval);
     }
 
     private void FireBurstShot()
@@ -156,12 +156,12 @@ public class Player : MonoBehaviour
 
     private bool CanFireCurrentWeapon()
     {
-        return AbilityManager.Instance.CanFire && currentHealth > CurrentWeapon.ProjectilesPerShot;
+        return GameManager.Instance.Ability.CanFire && currentHealth > CurrentWeapon.ProjectilesPerShot;
     }
 
     private void FireShotPattern(Vector3 aimDirection)
     {
-        if (AbilityManager.Instance.Fracture)
+        if (GameManager.Instance.Ability.Fracture)
         {
             SpawnProjectile(Quaternion.AngleAxis(-45f, Vector3.up) * aimDirection);
             SpawnProjectile(Quaternion.AngleAxis(45f, Vector3.up) * aimDirection);
@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
     private void SpawnProjectile(Vector3 shotDirection)
     {
         FireProjectile(shotDirection, CurrentWeapon.Damage, 0, false, true);
-        if (AbilityManager.Instance.Awaken)
+        if (GameManager.Instance.Ability.Awaken)
         {
             FireProjectile(Quaternion.AngleAxis(-8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false, false);
             FireProjectile(Quaternion.AngleAxis(8f, Vector3.up) * shotDirection, CurrentWeapon.Damage, 0, false, false);
@@ -267,12 +267,12 @@ public class Player : MonoBehaviour
         if (barrier > 0)
         {
             barrier--;
-            AbilityManager.Instance.OnBarrierBroken();
+            GameManager.Instance.Ability.OnBarrierBroken();
             return;
         }
 
         currentHealth -= Mathf.CeilToInt(damage);
-        AbilityManager.Instance.OnPlayerDamaged(damage);
+        GameManager.Instance.Ability.OnPlayerDamaged(damage);
         damageInvincibilityEndTime = Time.time + damageInvincibilityDuration;
         Damaged?.Invoke();
         NotifyHealthChanged();
@@ -349,11 +349,11 @@ public class Player : MonoBehaviour
 
     public void FireWingProjectile(Vector3 origin, Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
     {
-        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, origin, Quaternion.identity);
-        var abilityData = AbilityManager.Instance.CreateWingProjectileData(projectileDamage, homing, freezing);
+        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, origin, Quaternion.identity);
+        var abilityData = GameManager.Instance.Ability.CreateWingProjectileData(projectileDamage, homing, freezing);
         shotInstance.Initialize(
             direction.normalized,
-            AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed) * speedCoefficient,
+            GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed) * speedCoefficient,
             CurrentWeapon.ProjectileRange,
             abilityData,
             false
@@ -363,27 +363,27 @@ public class Player : MonoBehaviour
 
     public void FireFatalProjectile(Vector3 direction)
     {
-        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(0f), false);
+        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(direction.normalized, GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, GameManager.Instance.Ability.CreateProjectileData(0f), false);
         shotInstance.ForceFatal();
         shotInstance.gameObject.SetActive(true);
     }
 
     public void FireCriticalProjectile(Vector3 direction)
     {
-        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        shotInstance.Initialize(direction.normalized, AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, AbilityManager.Instance.CreateProjectileData(CurrentWeapon.Damage), false);
+        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        shotInstance.Initialize(direction.normalized, GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, GameManager.Instance.Ability.CreateProjectileData(CurrentWeapon.Damage), false);
         shotInstance.ForceCritical();
         shotInstance.gameObject.SetActive(true);
     }
 
     private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing, bool dropsBloodPickup)
     {
-        var shotInstance = PoolManager.Instance.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
-        var abilityData = AbilityManager.Instance.CreateProjectileData(projectileDamage, pierce, homing);
+        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var abilityData = GameManager.Instance.Ability.CreateProjectileData(projectileDamage, pierce, homing);
         shotInstance.Initialize(
             direction.normalized,
-            AbilityManager.Instance.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed),
+            GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed),
             CurrentWeapon.ProjectileRange,
             abilityData,
             dropsBloodPickup

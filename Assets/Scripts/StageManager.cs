@@ -59,7 +59,7 @@ public class StageManager : MonoBehaviour
 
             if (currentRound < totalRounds)
             {
-                GameStateManager.Instance.EnterRoundTransitionState();
+                GameManager.Instance.GameState.EnterRoundTransitionState();
             }
 
             BloodPickup.CollectAll(player);
@@ -72,7 +72,7 @@ public class StageManager : MonoBehaviour
 
                 if (!UIManager.Instance.IsPopupCardOpen)
                 {
-                    GameStateManager.Instance.EnterPlayingState();
+                    GameManager.Instance.GameState.EnterPlayingState();
                 }
 
                 yield return new WaitUntil(() => !UIManager.Instance.IsPopupCardOpen);
@@ -86,14 +86,14 @@ public class StageManager : MonoBehaviour
     {
         timePanel.UpdateDisplay(currentRound, GetCurrentRoundDuration());
 
-        if (AbilityManager.Instance.DisableEnemySpawning)
+        if (GameManager.Instance.Ability.DisableEnemySpawning)
         {
             return;
         }
 
         currentWave = GetCurrentWave();
         var roundSquare = currentRound * currentRound;
-        spawnTargetCount = roundSquare + 1 + AbilityManager.Instance.AdditionalEnemyCount;
+        spawnTargetCount = roundSquare + 1 + GameManager.Instance.Ability.AdditionalEnemyCount;
         availableEnemies = GetAvailableEnemies(currentWave);
         nextSpawnIndex = 0;
 
@@ -122,7 +122,7 @@ public class StageManager : MonoBehaviour
 
             if (elapsed >= nextSpawnTime)
             {
-                if (!AbilityManager.Instance.DisableEnemySpawning && aliveEnemyCount < spawnTargetCount)
+                if (!GameManager.Instance.Ability.DisableEnemySpawning && aliveEnemyCount < spawnTargetCount)
                 {
                     SpawnEnemy();
                 }

@@ -2,10 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class PoolManager : MonoBehaviour
+public sealed class PoolManager
 {
-    public static PoolManager Instance { get; private set; }
-
     private sealed class PoolCollection<T> where T : Component
     {
         private readonly Dictionary<T, ObjectPool<T>> pools = new();
@@ -35,16 +33,22 @@ public class PoolManager : MonoBehaviour
             activePools.Remove(instance);
             pool.Release(instance);
         }
+
+        public void Clear()
+        {
+            foreach (var pool in pools.Values)
+            {
+                pool.Clear();
+            }
+
+            pools.Clear();
+            activePools.Clear();
+        }
     }
 
     private readonly PoolCollection<BloodPickup> bloodPickupPool = new();
     private readonly PoolCollection<ShotProjectile> bulletPool = new();
     private readonly PoolCollection<EnemyProjectile> enemyShotPool = new();
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     public BloodPickup GetBloodPickup(BloodPickup prefab, Vector3 position, Quaternion rotation)
     {
@@ -76,8 +80,10 @@ public class PoolManager : MonoBehaviour
         enemyShotPool.Release(instance);
     }
 
-    private void OnDestroy()
+    public void Dispose()
     {
-        Instance = null;
+        bloodPickupPool.Clear();
+        bulletPool.Clear();
+        enemyShotPool.Clear();
     }
 }

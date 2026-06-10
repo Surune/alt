@@ -79,6 +79,6 @@ public class EnemyProjectile : MonoBehaviour
 
         isActive = false;
         rb.linearVelocity = Vector3.zero;
-        PoolManager.Instance.ReleaseEnemyShot(this);
+        GameManager.Instance.Pool.ReleaseEnemyShot(this);
     }
 }

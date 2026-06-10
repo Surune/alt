@@ -19,7 +19,7 @@ public class PopupCardUI : MonoBehaviour
 
     public bool Initialize()
     {
-        abilityManager = AbilityManager.Instance;
+        abilityManager = GameManager.Instance.Ability;
         player = FindFirstObjectByType<Player>();
         localization = LoadLocalization();
 

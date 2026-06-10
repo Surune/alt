@@ -40,14 +40,14 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        GameStateManager.Instance.EnterCardPopupState();
+        GameManager.Instance.GameState.EnterCardPopupState();
     }
 
     public void ClosePopupCard()
     {
         Destroy(activePopupCard);
         activePopupCard = null;
-        GameStateManager.Instance.EnterPlayingState();
+        GameManager.Instance.GameState.EnterPlayingState();
     }
 
     private void OnDestroy()

@@ -54,7 +54,7 @@ public class ShotProjectile : MonoBehaviour
         {
             if (abilityData.IsFatal)
             {
-                enemy.TakeFatalDamage(AbilityManager.Instance.BossFatalDamage);
+                enemy.TakeFatalDamage(GameManager.Instance.Ability.BossFatalDamage);
             }
             else
             {
@@ -72,7 +72,7 @@ public class ShotProjectile : MonoBehaviour
                 enemy.Slow(0.75f, 2f);
             }
 
-            AbilityManager.Instance.OnProjectileHit(enemy, abilityData);
+            GameManager.Instance.Ability.OnProjectileHit(enemy, abilityData);
             if (dropsBloodPickup)
             {
                 SpawnBloodPickup();
@@ -129,6 +129,6 @@ public class ShotProjectile : MonoBehaviour
 
         isActive = false;
         rb.linearVelocity = Vector3.zero;
-        PoolManager.Instance.ReleaseBullet(this);
+        GameManager.Instance.Pool.ReleaseBullet(this);
     }
 }
