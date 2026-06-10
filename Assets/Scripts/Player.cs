@@ -10,24 +10,15 @@ public class Player : MonoBehaviour
     public static event Action<int> HealthChanged;
 
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private Collider playerCollider;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
-    [SerializeField] private InputActionReference rollAction;
     [SerializeField] private int startingHealth = 25;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float speed = 4.5f;
-    [SerializeField] private float rollDuration = 0.3f;
-    [SerializeField] private float rollCooldown = 0.5f;
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
 
     private readonly List<WeaponData> ownedWeapons = new();
     private Vector2 moveInput;
-    private Vector3 rollDirection;
-    private Quaternion rollBaseRotation;
-    private float rollStartTime;
-    private float rollEndTime;
-    private float nextRollTime;
     private int currentHealth;
     private Camera cam;
     private float nextShotTime;
@@ -41,8 +32,7 @@ public class Player : MonoBehaviour
     public int CurrentHealth => currentHealth;
     
     private WeaponData CurrentWeapon => ownedWeapons[currentWeaponIndex];
-    private bool IsRolling => Time.time < rollEndTime;
-    private bool IsInvincible => IsRolling || Time.time < damageInvincibilityEndTime;
+    private bool IsInvincible => Time.time < damageInvincibilityEndTime;
     private int currentWeaponIndex;
 
     private void Awake()
@@ -76,12 +66,12 @@ public class Player : MonoBehaviour
         moveInput = moveAction.action.ReadValue<Vector2>();
         HandleWeaponScroll();
 
-        if (!IsRolling && queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
+        if (queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
         {
             FireBurstShot();
         }
 
-        if (!IsRolling && queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
         {
             StartAttack();
         }
@@ -89,11 +79,6 @@ public class Player : MonoBehaviour
         if (fearShotAction.action.WasPressedThisFrame())
         {
             UseFearShot();
-        }
-        
-        if (rollAction.action.WasPressedThisFrame())
-        {
-            StartRoll();
         }
     }
 
@@ -115,17 +100,6 @@ public class Player : MonoBehaviour
         var moveDirection = (right * moveInput.x) + (up * moveInput.y);
         var aimDirection = GetAimDirection();
 
-        if (IsRolling)
-        {
-            var rollPosition = rb.position + (rollDirection * speed * Time.fixedDeltaTime);
-            var rollProgress = (Time.time - rollStartTime) / rollDuration;
-            var rollRotation = rollBaseRotation * Quaternion.Euler(rollProgress * 360f, 0f, 0f);
-
-            rb.MoveRotation(rollRotation);
-            rb.MovePosition(rollPosition);
-            return;
-        }
-
         if (aimDirection.sqrMagnitude > 0f)
         {
             var targetRotation = Quaternion.LookRotation(aimDirection, Vector3.up);
@@ -138,29 +112,6 @@ public class Player : MonoBehaviour
         rb.MovePosition(nextPosition);
         movedDistance += Vector3.Distance(lastPosition, nextPosition);
         lastPosition = nextPosition;
-    }
-
-    private void StartRoll()
-    {
-        if (Time.time < nextRollTime)
-        {
-            return;
-        }
-
-        var moveDirection = GetMoveDirection();
-        if (moveDirection.sqrMagnitude > 0f)
-        {
-            rollDirection = moveDirection;
-        }
-        else
-        {
-            rollDirection = Vector3.zero;
-        }
-
-        rollBaseRotation = rb.rotation;
-        rollStartTime = Time.time;
-        rollEndTime = Time.time + rollDuration;
-        nextRollTime = Time.time + rollCooldown;
     }
 
     private void StartAttack()
@@ -303,21 +254,6 @@ public class Player : MonoBehaviour
         aimDirection.y = 0f;
         aimDirection.Normalize();
         return aimDirection;
-    }
-
-    private Vector3 GetMoveDirection()
-    {
-        var up = cam.transform.up;
-        up.y = 0f;
-        up.Normalize();
-
-        var right = cam.transform.right;
-        right.y = 0f;
-        right.Normalize();
-
-        var moveDirection = (right * moveInput.x) + (up * moveInput.y);
-        moveDirection.Normalize();
-        return moveDirection;
     }
 
     public void TakeDamage(float damage)

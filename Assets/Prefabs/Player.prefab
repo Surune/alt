@@ -97,16 +97,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 6613040455332606920}
-  playerCollider: {fileID: 6440261403373862725}
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   fearShotAction: {fileID: -3356157255947718216, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  rollAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   startingHealth: 25
   fearShotCount: 1
-  moveSpeed: 5
-  rollSpeed: 5
-  rollDuration: 0.3
-  rollCooldown: 0.5
+  speed: 4.5
   damageInvincibilityDuration: 0.5
 --- !u!114 &7394275891643826601
 MonoBehaviour:
