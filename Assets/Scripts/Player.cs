@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference fearShotAction;
+    [SerializeField] private WeaponData startingWeapon;
     [SerializeField] private int startingHealth = 25;
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float speed = 4.5f;
@@ -46,11 +46,7 @@ public class Player : MonoBehaviour
     
     private void Start()
     {
-        var weapons = WeaponCatalog.Instance.Weapons;
-        var randomIndex = Random.Range(0, weapons.Length);
-        var startWeapon = weapons[randomIndex];
-
-        ownedWeapons.Add(startWeapon);
+        ownedWeapons.Add(startingWeapon);
         NotifyCurrentWeaponChanged();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
@@ -389,35 +385,6 @@ public class Player : MonoBehaviour
             dropsBloodPickup
         );
         shotInstance.gameObject.SetActive(true);
-    }
-
-    public WeaponData[] GetUnownedWeapons()
-    {
-        var catalogWeapons = WeaponCatalog.Instance.Weapons;
-        var unownedWeapons = new List<WeaponData>();
-
-        for (var i = 0; i < catalogWeapons.Length; i++)
-        {
-            var weapon = catalogWeapons[i];
-            if (!ownedWeapons.Contains(weapon))
-            {
-                unownedWeapons.Add(weapon);
-            }
-        }
-
-        return unownedWeapons.ToArray();
-    }
-
-    public void AcquireWeapon(WeaponData newWeapon)
-    {
-        ownedWeapons.Add(newWeapon);
-        currentWeaponIndex = ownedWeapons.Count - 1;
-        queuedBurstShots = 0;
-        nextBurstShotTime = 0f;
-        nextShotTime = Time.time;
-        NotifyCurrentWeaponChanged();
-
-        Debug.Log($"Weapon acquired: {CurrentWeapon.DisplayName}");
     }
 
     private void NotifyCurrentWeaponChanged()

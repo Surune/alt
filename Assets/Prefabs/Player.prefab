@@ -98,6 +98,7 @@ MonoBehaviour:
   rb: {fileID: 6613040455332606920}
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   fearShotAction: {fileID: -3356157255947718216, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  startingWeapon: {fileID: 11400000, guid: 0e9d63c13db1482f8ca3baa4d6b20f51, type: 2}
   startingHealth: 25
   fearShotCount: 1
   speed: 4.5

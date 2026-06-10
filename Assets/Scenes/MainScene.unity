@@ -258,7 +258,6 @@ GameObject:
   - component: {fileID: 1700000001}
   - component: {fileID: 1700000007}
   - component: {fileID: 1700000003}
-  - component: {fileID: 1700000005}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -295,25 +294,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popupCardPrefab: {fileID: 5457051394418818594, guid: 6cb9e58f115ca394288121b570684694, type: 3}
   currentWeaponPanel: {fileID: 9143793639862679324}
---- !u!114 &1700000005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700000000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f8577b4dfd04f5180ca4e5d28c85c42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 11400000, guid: 0e9d63c13db1482f8ca3baa4d6b20f51, type: 2}
-  - {fileID: 11400000, guid: 4d7c48a5065441e2b25c8d231de64a6e, type: 2}
-  - {fileID: 11400000, guid: 0a7aa259aeab4c5b9fd0c318a54e3af8, type: 2}
-  - {fileID: 11400000, guid: e2af83b5d59f49a88cc4ec4a227ff37b, type: 2}
-  - {fileID: 11400000, guid: 9f1b52fc78654ce8b483a75f8c0dc7af, type: 2}
-  - {fileID: 11400000, guid: bcf2d7c5331748238d1038c43ec4d159, type: 2}
 --- !u!114 &1700000007
 MonoBehaviour:
   m_ObjectHideFlags: 0
