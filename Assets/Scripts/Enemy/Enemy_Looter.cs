@@ -59,24 +59,51 @@ public class Enemy_Looter : Enemy
 
         awayFromPlayer /= distance;
 
-        var strafeDirection = Vector3.Cross(Vector3.up, awayFromPlayer);
+        var strafeAngle = Mathf.Atan2(strafeDistance, escapeStep) * Mathf.Rad2Deg;
         if (Mathf.Sin(Time.time * strafeFrequency) < 0f)
         {
-            strafeDirection = -strafeDirection;
+            strafeAngle = -strafeAngle;
         }
 
         var distanceGap = Mathf.Max(0f, safeDistance - distance);
         var escapeDistance = escapeStep + distanceGap;
+        var origin = agent.nextPosition;
+        var destination = origin;
+        var bestDistanceFromPlayer = float.MinValue;
+        var minimumTravelSqr = escapeStep * escapeStep * 0.25f;
+        var preferredDirection = Quaternion.AngleAxis(strafeAngle, Vector3.up) * awayFromPlayer;
 
-        var destination = transform.position;
-        destination += awayFromPlayer * escapeDistance;
-        destination += strafeDirection * strafeDistance;
-
-        if (NavMesh.SamplePosition(destination, out var hit, 5f, NavMesh.AllAreas))
+        for (var angleIndex = -6; angleIndex <= 6; angleIndex++)
         {
-            destination = hit.position;
+            var direction = Quaternion.AngleAxis(angleIndex * 30f, Vector3.up) * preferredDirection;
+            EvaluateDestination(direction * escapeDistance, origin, minimumTravelSqr,
+                ref destination, ref bestDistanceFromPlayer);
         }
 
         agent.SetDestination(destination);
+    }
+
+    private void EvaluateDestination(Vector3 offset, Vector3 origin, float minimumTravelSqr,
+        ref Vector3 destination, ref float bestDistanceFromPlayer)
+    {
+        var candidate = origin + offset;
+        if (NavMesh.Raycast(origin, candidate, out var hit, NavMesh.AllAreas))
+        {
+            candidate = hit.position;
+        }
+
+        if ((candidate - origin).sqrMagnitude < minimumTravelSqr)
+        {
+            return;
+        }
+
+        var distanceFromPlayer = (candidate - player.position).sqrMagnitude;
+        if (distanceFromPlayer <= bestDistanceFromPlayer)
+        {
+            return;
+        }
+
+        bestDistanceFromPlayer = distanceFromPlayer;
+        destination = candidate;
     }
 }
