@@ -11,6 +11,7 @@ public class Enemy_Spawner : Enemy_Baby
 
     public override void TakeDamage(float damage)
     {
+        PlayDamageFlash();
         currentHealth -= damage;
 
         if (!(currentHealth <= 0))

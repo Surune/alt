@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -23,8 +24,11 @@ public class Enemy : MonoBehaviour
     protected int bloodDropAmount;
     private int activeSupportBuffCount;
     private readonly List<Material> highlightMaterials = new();
+    private readonly List<Color> baseColors = new();
+    private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
     private static readonly List<Enemy> ActiveEnemies = new();
+    private const float DamageFlashDuration = 0.1f;
 
     public bool IsFullHealth => currentHealth >= maxHealth;
     public bool IsDead => currentHealth <= 0f;
@@ -76,6 +80,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        PlayDamageFlash();
         currentHealth -= damage;
 
         if (!(currentHealth <= 0))
@@ -98,7 +103,7 @@ public class Enemy : MonoBehaviour
         StartCoroutine(nameof(RestoreSpeed), duration);
     }
 
-    private System.Collections.IEnumerator RestoreSpeed(float duration)
+    private IEnumerator RestoreSpeed(float duration)
     {
         yield return new WaitForSeconds(duration);
         agent.speed = baseMoveSpeed;
@@ -245,14 +250,22 @@ public class Enemy : MonoBehaviour
 
     private void EnableHighlight()
     {
+        EnsureHighlightMaterials();
+        SetHighlightColor(Color.yellow * 2f);
+    }
+
+    protected void PlayDamageFlash()
+    {
+        StopCoroutine(nameof(RestoreBaseColors));
+        EnsureHighlightMaterials();
+        SetBaseColor(Color.red);
+        StartCoroutine(nameof(RestoreBaseColors));
+    }
+
+    private void EnsureHighlightMaterials()
+    {
         if (highlightMaterials.Count > 0)
         {
-            for (var i = 0; i < highlightMaterials.Count; i++)
-            {
-                highlightMaterials[i].EnableKeyword("_EMISSION");
-                highlightMaterials[i].SetColor(EmissionColor, Color.yellow * 2f);
-            }
-
             return;
         }
 
@@ -264,21 +277,45 @@ public class Enemy : MonoBehaviour
             {
                 var materialInstance = Instantiate(materials[j]);
                 materialInstance.EnableKeyword("_EMISSION");
-                materialInstance.SetColor(EmissionColor, Color.yellow * 2f);
+                materialInstance.SetColor(EmissionColor, Color.black);
                 materials[j] = materialInstance;
                 highlightMaterials.Add(materialInstance);
+                baseColors.Add(materialInstance.GetColor(BaseColor));
             }
 
             renderers[i].materials = materials;
         }
     }
 
-    private void DisableHighlight()
+    private IEnumerator RestoreBaseColors()
+    {
+        yield return new WaitForSeconds(DamageFlashDuration);
+        for (var i = 0; i < highlightMaterials.Count; i++)
+        {
+            highlightMaterials[i].SetColor(BaseColor, baseColors[i]);
+        }
+    }
+
+    private void SetBaseColor(Color color)
     {
         for (var i = 0; i < highlightMaterials.Count; i++)
         {
-            highlightMaterials[i].SetColor(EmissionColor, Color.black);
+            highlightMaterials[i].SetColor(BaseColor, color);
         }
+    }
+
+    private void SetHighlightColor(Color color)
+    {
+        for (var i = 0; i < highlightMaterials.Count; i++)
+        {
+            highlightMaterials[i].EnableKeyword("_EMISSION");
+            highlightMaterials[i].SetColor(EmissionColor, color);
+        }
+    }
+
+    private void DisableHighlight()
+    {
+        SetHighlightColor(Color.black);
     }
 
     private void OnDestroy()
