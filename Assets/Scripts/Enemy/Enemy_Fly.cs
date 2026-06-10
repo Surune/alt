@@ -4,12 +4,9 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Fly : Enemy
 {
-    [SerializeField] private EnemyProjectile shotPrefab;
     [SerializeField] private float awarenessRange = 14f;
     [SerializeField] private float turnSpeed = 720f;
     [SerializeField] private float repathInterval = 0.2f;
-    [SerializeField] private float shotSpeed = 7f;
-    [SerializeField] private float shotRange = 18f;
 
     private float nextRepathTime;
 
@@ -87,8 +84,8 @@ public class Enemy_Fly : Enemy
     {
         var angle = Random.Range(0f, 360f);
         var shotDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
-        var shot = GameManager.Instance.Pool.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotDirection, shotSpeed, shotRange);
+        var shot = GameManager.Instance.Pool.GetEnemyProjectile(transform.position, Quaternion.identity);
+        shot.Initialize(shotDirection);
         shot.gameObject.SetActive(true);
     }
 }

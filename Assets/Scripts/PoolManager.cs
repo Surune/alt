@@ -47,12 +47,23 @@ public sealed class PoolManager
     }
 
     private readonly PoolCollection<BloodPickup> bloodPickupPool = new();
-    private readonly PoolCollection<ShotProjectile> bulletPool = new();
+    private readonly PoolCollection<PlayerProjectile> bulletPool = new();
     private readonly PoolCollection<EnemyProjectile> enemyShotPool = new();
 
-    public BloodPickup GetBloodPickup(BloodPickup prefab, Vector3 position, Quaternion rotation)
+    private BloodPickup bloodPrefab;
+    private PlayerProjectile playerProjectile;
+    private EnemyProjectile enemyProjectile;
+    
+    public PoolManager(BloodPickup bloodPrefab, PlayerProjectile playerProjectile, EnemyProjectile enemyProjectile)
     {
-        return bloodPickupPool.Get(prefab, position, rotation);
+        this.bloodPrefab = bloodPrefab;
+        this.playerProjectile = playerProjectile;
+        this.enemyProjectile = enemyProjectile;
+    }
+    
+    public BloodPickup GetBloodPickup(Vector3 position, Quaternion rotation)
+    {
+        return bloodPickupPool.Get(bloodPrefab, position, rotation);
     }
 
     public void ReleaseBloodPickup(BloodPickup instance)
@@ -60,22 +71,22 @@ public sealed class PoolManager
         bloodPickupPool.Release(instance);
     }
 
-    public ShotProjectile GetBullet(ShotProjectile prefab, Vector3 position, Quaternion rotation)
+    public PlayerProjectile GetPlayerProjectile(Vector3 position, Quaternion rotation)
     {
-        return bulletPool.Get(prefab, position, rotation);
+        return bulletPool.Get(playerProjectile, position, rotation);
     }
 
-    public void ReleaseBullet(ShotProjectile instance)
+    public void ReleaseBullet(PlayerProjectile instance)
     {
         bulletPool.Release(instance);
     }
 
-    public EnemyProjectile GetEnemyShot(EnemyProjectile prefab, Vector3 position, Quaternion rotation)
+    public EnemyProjectile GetEnemyProjectile(Vector3 position, Quaternion rotation)
     {
-        return enemyShotPool.Get(prefab, position, rotation);
+        return enemyShotPool.Get(enemyProjectile, position, rotation);
     }
 
-    public void ReleaseEnemyShot(EnemyProjectile instance)
+    public void ReleaseEnemyProjectile(EnemyProjectile instance)
     {
         enemyShotPool.Release(instance);
     }

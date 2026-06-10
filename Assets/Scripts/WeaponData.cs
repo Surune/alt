@@ -17,7 +17,7 @@ public class WeaponData : ScriptableObject
     public string Description;
     public WeaponCategory Category;
     public Sprite Icon;
-    public ShotProjectile ProjectilePrefab;
+    public PlayerProjectile ProjectilePrefab;
     public int Damage;
     public int ProjectilesPerShot;
     public int BurstCount;

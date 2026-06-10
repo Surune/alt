@@ -10,8 +10,7 @@ public class Boss : Enemy
         RadialNova,
         SpiralSweep
     }
-
-    [SerializeField] private EnemyProjectile shotPrefab;
+    
     [SerializeField] private float awarenessRange = 12f;
     [SerializeField] private float preferredDistance = 6f;
     [SerializeField] private float distanceSlack = 1.5f;
@@ -21,8 +20,6 @@ public class Boss : Enemy
     [SerializeField] private float repathInterval = 0.2f;
     [SerializeField] private float turnSpeed = 720f;
     [SerializeField] private float patternCooldown = 2f;
-    [SerializeField] private float shotSpeed = 6f;
-    [SerializeField] private float shotRange = 18f;
     [SerializeField] private int aimedBurstWaveCount = 3;
     [SerializeField] private int aimedBurstShotCount = 5;
     [SerializeField] private float aimedBurstSpreadAngle = 42f;
@@ -263,8 +260,8 @@ public class Boss : Enemy
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shot = GameManager.Instance.Pool.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotDirection.normalized, shotSpeed, shotRange);
+        var shot = GameManager.Instance.Pool.GetEnemyProjectile(transform.position, Quaternion.identity);
+        shot.Initialize(shotDirection.normalized);
         shot.gameObject.SetActive(true);
     }
 }

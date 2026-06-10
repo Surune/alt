@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class ShotProjectile : MonoBehaviour
+public class PlayerProjectile : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
@@ -117,7 +117,7 @@ public class ShotProjectile : MonoBehaviour
         var bloodPosition = transform.position;
         bloodPosition.y = 0.02f;
         var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation, 1);
+        BloodPickup.SpawnOrGrow(bloodPosition, bloodRotation, 1);
     }
 
     private void Release()

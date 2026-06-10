@@ -349,7 +349,7 @@ public class Player : MonoBehaviour
 
     public void FireWingProjectile(Vector3 origin, Vector3 direction, float projectileDamage, float speedCoefficient, bool homing, bool freezing)
     {
-        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, origin, Quaternion.identity);
+        var shotInstance = GameManager.Instance.Pool.GetPlayerProjectile(origin, Quaternion.identity);
         var abilityData = GameManager.Instance.Ability.CreateWingProjectileData(projectileDamage, homing, freezing);
         shotInstance.Initialize(
             direction.normalized,
@@ -363,7 +363,7 @@ public class Player : MonoBehaviour
 
     public void FireFatalProjectile(Vector3 direction)
     {
-        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = GameManager.Instance.Pool.GetPlayerProjectile(rb.position, Quaternion.identity);
         shotInstance.Initialize(direction.normalized, GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, GameManager.Instance.Ability.CreateProjectileData(0f), false);
         shotInstance.ForceFatal();
         shotInstance.gameObject.SetActive(true);
@@ -371,7 +371,7 @@ public class Player : MonoBehaviour
 
     public void FireCriticalProjectile(Vector3 direction)
     {
-        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = GameManager.Instance.Pool.GetPlayerProjectile(rb.position, Quaternion.identity);
         shotInstance.Initialize(direction.normalized, GameManager.Instance.Ability.GetProjectileSpeed(CurrentWeapon.ProjectileSpeed), CurrentWeapon.ProjectileRange, GameManager.Instance.Ability.CreateProjectileData(CurrentWeapon.Damage), false);
         shotInstance.ForceCritical();
         shotInstance.gameObject.SetActive(true);
@@ -379,7 +379,7 @@ public class Player : MonoBehaviour
 
     private void FireProjectile(Vector3 direction, float projectileDamage, int pierce, bool homing, bool dropsBloodPickup)
     {
-        var shotInstance = GameManager.Instance.Pool.GetBullet(CurrentWeapon.ProjectilePrefab, rb.position, Quaternion.identity);
+        var shotInstance = GameManager.Instance.Pool.GetPlayerProjectile(rb.position, Quaternion.identity);
         var abilityData = GameManager.Instance.Ability.CreateProjectileData(projectileDamage, pierce, homing);
         shotInstance.Initialize(
             direction.normalized,

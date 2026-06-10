@@ -281,19 +281,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1700000007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700000000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed7b5d86ece849e385926da35925805e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  wingPrefab: {fileID: 6435278410058332641, guid: a856278cbd9e53348a63361e93ca8534, type: 3}
 --- !u!114 &1700000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,6 +314,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e2af83b5d59f49a88cc4ec4a227ff37b, type: 2}
   - {fileID: 11400000, guid: 9f1b52fc78654ce8b483a75f8c0dc7af, type: 2}
   - {fileID: 11400000, guid: bcf2d7c5331748238d1038c43ec4d159, type: 2}
+--- !u!114 &1700000007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed7b5d86ece849e385926da35925805e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wingPrefab: {fileID: 6435278410058332641, guid: a856278cbd9e53348a63361e93ca8534, type: 3}
+  bloodPickupPrefab: {fileID: 4277246807266260747, guid: f63227d5a47d44628f91c57710fc8ae0, type: 3}
+  playerPrefab: {fileID: 4452706447385332178, guid: 4ce47ab5ca1328e46853a760d2a484e0, type: 3}
+  enemyProjectilePrefab: {fileID: 4452706447385332178, guid: 838cdf2e2b9345ac97d7481101819c5f, type: 3}
 --- !u!1001 &2653829412605370674
 PrefabInstance:
   m_ObjectHideFlags: 0

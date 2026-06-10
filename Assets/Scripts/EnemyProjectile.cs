@@ -5,14 +5,14 @@ public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider shotCollider;
-    [SerializeField] private int damage = 1;
-
+    [SerializeField] private float speed = 3f;
+    [SerializeField] private float range = 15f;
+    
     private static readonly List<EnemyProjectile> ActiveProjectiles = new();
 
     private Vector3 direction;
     private Vector3 startPosition;
-    private float speed;
-    private float maxDistance;
+    private int damage;
     private bool isActive;
 
     private void OnEnable()
@@ -25,13 +25,11 @@ public class EnemyProjectile : MonoBehaviour
         ActiveProjectiles.Remove(this);
     }
 
-    public void Initialize(Vector3 shotDirection, float shotSpeed, float shotRange)
+    public void Initialize(Vector3 shotDirection)
     {
         isActive = true;
         direction = shotDirection;
         startPosition = rb.position;
-        speed = shotSpeed;
-        maxDistance = shotRange;
         rb.linearVelocity = direction * speed;
     }
 
@@ -40,7 +38,7 @@ public class EnemyProjectile : MonoBehaviour
         rb.linearVelocity = direction * speed;
 
         var distanceVector = rb.position - startPosition;
-        if (distanceVector.sqrMagnitude >= maxDistance * maxDistance)
+        if (distanceVector.sqrMagnitude >= range * range)
         {
             Release();
         }
@@ -79,6 +77,6 @@ public class EnemyProjectile : MonoBehaviour
 
         isActive = false;
         rb.linearVelocity = Vector3.zero;
-        GameManager.Instance.Pool.ReleaseEnemyShot(this);
+        GameManager.Instance.Pool.ReleaseEnemyProjectile(this);
     }
 }

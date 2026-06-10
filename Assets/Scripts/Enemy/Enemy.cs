@@ -11,7 +11,6 @@ public class Enemy : MonoBehaviour
     public static event Action<Enemy> OnDeath;
 
     [SerializeField] protected NavMeshAgent agent;
-    [SerializeField] private BloodPickup bloodPickupPrefab;
 
     protected Transform player;
     protected float maxHealth;
@@ -213,7 +212,7 @@ public class Enemy : MonoBehaviour
     {
         var bloodPosition = transform.position;
         var bloodRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-        BloodPickup.SpawnOrGrow(bloodPickupPrefab, bloodPosition, bloodRotation, amount);
+        BloodPickup.SpawnOrGrow(bloodPosition, bloodRotation, amount);
     }
 
     private void RefreshSupportBuff()

@@ -4,7 +4,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Spitter : Enemy
 {
-    [SerializeField] private EnemyProjectile shotPrefab;
     [SerializeField] private float awarenessRange = 14f;
     [SerializeField] private float preferredDistance = 7f;
     [SerializeField] private float distanceSlack = 1.5f;
@@ -15,8 +14,6 @@ public class Enemy_Spitter : Enemy
     [SerializeField] private float repathInterval = 0.2f;
     [SerializeField] private float turnSpeed = 720f;
     [SerializeField] private float fireInterval = 1.4f;
-    [SerializeField] private float shotSpeed = 7f;
-    [SerializeField] private float shotRange = 18f;
     [SerializeField] private int shotCount = 3;
     [SerializeField] private float spreadAngle = 18f;
 
@@ -153,8 +150,8 @@ public class Enemy_Spitter : Enemy
 
     private void SpawnProjectile(Vector3 shotDirection)
     {
-        var shot = GameManager.Instance.Pool.GetEnemyShot(shotPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotDirection.normalized, shotSpeed, shotRange);
+        var shot = GameManager.Instance.Pool.GetEnemyProjectile(transform.position, Quaternion.identity);
+        shot.Initialize(shotDirection.normalized);
         shot.gameObject.SetActive(true);
     }
 }

@@ -19,7 +19,7 @@ public class BloodPickup : MonoBehaviour
     private Player collectingPlayer;
     private bool isCollecting;
 
-    public static void SpawnOrGrow(BloodPickup prefab, Vector3 position, Quaternion rotation, int amount)
+    public static void SpawnOrGrow(Vector3 position, Quaternion rotation, int amount)
     {
         foreach (var activePickup in ActivePickups)
         {
@@ -34,7 +34,7 @@ public class BloodPickup : MonoBehaviour
             return;
         }
 
-        var pickup = GameManager.Instance.Pool.GetBloodPickup(prefab, position, rotation);
+        var pickup = GameManager.Instance.Pool.GetBloodPickup(position, rotation);
         pickup.transform.localScale = Vector3.one;
         pickup.healAmount = amount;
         pickup.baseY = position.y;
