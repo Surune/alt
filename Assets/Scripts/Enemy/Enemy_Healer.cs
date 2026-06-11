@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Healer : Enemy
 {
     [SerializeField] private float trackingRange = 18f;
@@ -116,9 +115,8 @@ public class Enemy_Healer : Enemy
         var amount = 100f + (10f * currentWave);
         var rangeSqr = healRange * healRange;
 
-        for (var i = 0; i < enemies.Length; i++)
+        foreach (var enemy in enemies)
         {
-            var enemy = enemies[i];
             if (enemy == this)
             {
                 continue;

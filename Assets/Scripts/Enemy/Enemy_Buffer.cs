@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Buffer : Enemy
 {
     [SerializeField] private float awarenessRange = 18f;
@@ -59,9 +58,8 @@ public class Enemy_Buffer : Enemy
         var closestSqrDistance = allyAnchorRange * allyAnchorRange;
         Enemy closestEnemy = this;
 
-        for (var i = 0; i < enemies.Length; i++)
+        foreach (var enemy in enemies)
         {
-            var enemy = enemies[i];
             if (enemy == this)
             {
                 continue;

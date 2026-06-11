@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Looter : Enemy
 {
     [SerializeField] private float safeDistance = 16f;

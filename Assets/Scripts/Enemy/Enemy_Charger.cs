@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Charger : Enemy
 {
     [SerializeField] private float awarenessRange = 14f;

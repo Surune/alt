@@ -1,7 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy_Bruiser : Enemy
 {
     [SerializeField] private float awarenessRange = 16f;
@@ -58,6 +58,8 @@ public class Enemy_Bruiser : Enemy
                 UpdateFacing(player.position);
                 UpdateCooldown();
                 break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
