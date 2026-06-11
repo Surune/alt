@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     public static event Action<WeaponData> CurrentWeaponChanged;
+    public static event Action<int> MagazineAmmoChanged;
     public static event Action<int> HealthChanged;
     public static event Action Damaged;
 
@@ -19,16 +20,19 @@ public class Player : MonoBehaviour
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
 
     private readonly List<WeaponData> ownedWeapons = new();
+    private readonly Dictionary<WeaponData, int> magazineAmmo = new();
     private Vector2 moveInput;
     private int currentHealth;
     private Camera cam;
     private float nextShotTime;
     private float nextBurstShotTime;
+    private float reloadEndTime;
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
     private int barrier;
     private Vector3 lastPosition;
     private float movedDistance;
+    private bool isReloading;
 
     public int CurrentHealth => currentHealth;
     
@@ -47,6 +51,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         ownedWeapons.Add(startingWeapon);
+        magazineAmmo.Add(startingWeapon, startingWeapon.MagazineSize);
         NotifyCurrentWeaponChanged();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
@@ -62,6 +67,16 @@ public class Player : MonoBehaviour
 
         moveInput = moveAction.action.ReadValue<Vector2>();
         HandleWeaponScroll();
+
+        if (isReloading && Time.time >= reloadEndTime)
+        {
+            CompleteReload();
+        }
+
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            StartReload();
+        }
 
         if (queuedBurstShots > 0 && Time.time >= nextBurstShotTime)
         {
@@ -113,6 +128,12 @@ public class Player : MonoBehaviour
 
     private void StartAttack()
     {
+        if (magazineAmmo[CurrentWeapon] == 0)
+        {
+            StartReload();
+            return;
+        }
+
         if (!CanFireCurrentWeapon())
         {
             return;
@@ -133,6 +154,8 @@ public class Player : MonoBehaviour
 
         var aimDirection = GetAimDirection();
         FireShotPattern(aimDirection);
+        magazineAmmo[CurrentWeapon]--;
+        NotifyMagazineAmmoChanged();
         currentHealth -= CurrentWeapon.ProjectilesPerShot;
         queuedBurstShots--;
         NotifyHealthChanged();
@@ -144,6 +167,13 @@ public class Player : MonoBehaviour
             return;
         }
 
+        if (magazineAmmo[CurrentWeapon] == 0)
+        {
+            queuedBurstShots = 0;
+            StartReload();
+            return;
+        }
+
         if (queuedBurstShots > 0)
         {
             nextBurstShotTime = Time.time + CurrentWeapon.BurstInterval;
@@ -152,7 +182,30 @@ public class Player : MonoBehaviour
 
     private bool CanFireCurrentWeapon()
     {
-        return GameManager.Instance.Ability.CanFire && currentHealth > CurrentWeapon.ProjectilesPerShot;
+        return !isReloading
+            && magazineAmmo[CurrentWeapon] > 0
+            && GameManager.Instance.Ability.CanFire
+            && currentHealth > CurrentWeapon.ProjectilesPerShot;
+    }
+
+    private void StartReload()
+    {
+        if (isReloading || magazineAmmo[CurrentWeapon] == CurrentWeapon.MagazineSize)
+        {
+            return;
+        }
+
+        isReloading = true;
+        queuedBurstShots = 0;
+        reloadEndTime = Time.time + CurrentWeapon.ReloadDuration;
+    }
+
+    private void CompleteReload()
+    {
+        magazineAmmo[CurrentWeapon] = CurrentWeapon.MagazineSize;
+        isReloading = false;
+        nextShotTime = Time.time;
+        NotifyMagazineAmmoChanged();
     }
 
     private void FireShotPattern(Vector3 aimDirection)
@@ -226,7 +279,9 @@ public class Player : MonoBehaviour
         queuedBurstShots = 0;
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
+        isReloading = false;
         NotifyCurrentWeaponChanged();
+        NotifyMagazineAmmoChanged();
 
         Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
     }
@@ -390,6 +445,11 @@ public class Player : MonoBehaviour
     private void NotifyCurrentWeaponChanged()
     {
         CurrentWeaponChanged?.Invoke(CurrentWeapon);
+    }
+
+    private void NotifyMagazineAmmoChanged()
+    {
+        MagazineAmmoChanged?.Invoke(magazineAmmo[CurrentWeapon]);
     }
 
     private void NotifyHealthChanged()

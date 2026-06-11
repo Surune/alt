@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         Player.CurrentWeaponChanged += HandleCurrentWeaponChanged;
+        Player.MagazineAmmoChanged += HandleMagazineAmmoChanged;
     }
 
     public void ShowPopupCard()
@@ -53,6 +54,7 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         Player.CurrentWeaponChanged -= HandleCurrentWeaponChanged;
+        Player.MagazineAmmoChanged -= HandleMagazineAmmoChanged;
 
         if (Instance == this)
         {
@@ -63,5 +65,10 @@ public class UIManager : MonoBehaviour
     private void HandleCurrentWeaponChanged(WeaponData weapon)
     {
         currentWeaponPanel.Init(weapon);
+    }
+
+    private void HandleMagazineAmmoChanged(int ammo)
+    {
+        currentWeaponPanel.SetAmmo(ammo);
     }
 }

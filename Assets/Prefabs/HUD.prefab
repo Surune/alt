@@ -32,8 +32,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5812345678901234567}
   - {fileID: 8266749824319187204}
+  - {fileID: 5812345678901234567}
   - {fileID: 6701595507256681814}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -115,8 +115,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a9ecb3c53664df49a875332670cc302, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   vignetteMaterial: {fileID: 2100000, guid: 903eb98837d94f81bc9962052c77d9af, type: 2}
   peakAlpha: 0.85
   fadeDuration: 0.6
