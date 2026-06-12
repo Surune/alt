@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -162,8 +163,7 @@ public class Player : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            queuedBurstShots = 0;
-            Destroy(gameObject);
+            Die();
             return;
         }
 
@@ -329,8 +329,14 @@ public class Player : MonoBehaviour
         NotifyHealthChanged();
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        queuedBurstShots = 0;
+        SceneManager.LoadScene("GameOverScene");
     }
 
     public void Heal(int amount)
