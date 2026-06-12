@@ -11,8 +11,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private float[] roundDurations = { 15f };
     [SerializeField] private float spawnInnerRadius = 3.5f;
     [SerializeField] private float spawnOuterRadius = 4.75f;
-    [SerializeField] private float minSpawnInterval = 0.5f;
-    [SerializeField] private float maxSpawnInterval = 1.5f;
+    [SerializeField] private float minSpawnInterval = 0.2f;
+    [SerializeField] private float maxSpawnInterval = 0.5f;
 
     private int currentRound = 1;
     private int aliveEnemyCount;
@@ -97,17 +97,7 @@ public class StageManager : MonoBehaviour
         availableEnemies = GetAvailableEnemies(currentWave);
         nextSpawnIndex = 0;
 
-        SpawnEnemiesToTarget();
-
-        Debug.Log($"Round {currentRound} started: {spawnTargetCount} active enemies / wave {currentWave}");
-    }
-
-    private void SpawnEnemiesToTarget()
-    {
-        while (aliveEnemyCount < spawnTargetCount)
-        {
-            SpawnEnemy();
-        }
+        Debug.Log($"Round {currentRound} started: {spawnTargetCount} spawn target / wave {currentWave}");
     }
 
     private IEnumerator WaitForRoundEnd()
