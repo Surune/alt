@@ -27,7 +27,8 @@ public class Player : MonoBehaviour
     private Camera cam;
     private float nextShotTime;
     private float nextBurstShotTime;
-    private float reloadEndTime;
+    private float nextReloadBulletTime;
+    private float reloadBulletInterval;
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
     private int barrier;
@@ -69,9 +70,9 @@ public class Player : MonoBehaviour
         moveInput = moveAction.action.ReadValue<Vector2>();
         HandleWeaponScroll();
 
-        if (isReloading && Time.time >= reloadEndTime)
+        if (isReloading)
         {
-            CompleteReload();
+            UpdateReload();
         }
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
@@ -84,9 +85,19 @@ public class Player : MonoBehaviour
             FireBurstShot();
         }
 
-        if (queuedBurstShots == 0 && Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+        if (queuedBurstShots == 0)
         {
-            StartAttack();
+            if (magazineAmmo[CurrentWeapon] == 0)
+            {
+                if (Mouse.current.leftButton.wasPressedThisFrame)
+                {
+                    StartReload();
+                }
+            }
+            else if (Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+            {
+                StartAttack();
+            }
         }
 
         if (fearShotAction.action.WasPressedThisFrame())
@@ -129,12 +140,6 @@ public class Player : MonoBehaviour
 
     private void StartAttack()
     {
-        if (magazineAmmo[CurrentWeapon] == 0)
-        {
-            StartReload();
-            return;
-        }
-
         if (!CanFireCurrentWeapon())
         {
             return;
@@ -170,7 +175,6 @@ public class Player : MonoBehaviour
         if (magazineAmmo[CurrentWeapon] == 0)
         {
             queuedBurstShots = 0;
-            StartReload();
             return;
         }
 
@@ -197,15 +201,27 @@ public class Player : MonoBehaviour
 
         isReloading = true;
         queuedBurstShots = 0;
-        reloadEndTime = Time.time + CurrentWeapon.ReloadDuration;
+        reloadBulletInterval = CurrentWeapon.ReloadDuration
+            / (CurrentWeapon.MagazineSize - magazineAmmo[CurrentWeapon]);
+        nextReloadBulletTime = Time.time + reloadBulletInterval;
     }
 
-    private void CompleteReload()
+    private void UpdateReload()
     {
-        magazineAmmo[CurrentWeapon] = CurrentWeapon.MagazineSize;
-        isReloading = false;
-        nextShotTime = Time.time;
-        NotifyMagazineAmmoChanged();
+        while (Time.time >= nextReloadBulletTime)
+        {
+            magazineAmmo[CurrentWeapon]++;
+            NotifyMagazineAmmoChanged();
+
+            if (magazineAmmo[CurrentWeapon] == CurrentWeapon.MagazineSize)
+            {
+                isReloading = false;
+                nextShotTime = Time.time;
+                return;
+            }
+
+            nextReloadBulletTime += reloadBulletInterval;
+        }
     }
 
     private void FireShotPattern(Vector3 aimDirection)
