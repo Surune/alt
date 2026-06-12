@@ -17,8 +17,6 @@ public class StageManager : MonoBehaviour
 
     private int currentRound = 1;
     private int aliveEnemyCount;
-    private int spawnTargetCount;
-    private int nextSpawnIndex;
     private int currentWave;
     private List<EnemyData> availableEnemies;
     private Player player;
@@ -93,13 +91,8 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        currentWave = GetCurrentWave();
-        var roundSquare = currentRound * currentRound;
-        spawnTargetCount = roundSquare + 1 + GameManager.Instance.Ability.AdditionalEnemyCount;
-        availableEnemies = GetAvailableEnemies(currentWave);
-        nextSpawnIndex = 0;
-
-        Debug.Log($"Round {currentRound} started: {spawnTargetCount} spawn target / wave {currentWave}");
+        availableEnemies = GetAvailableEnemies(currentRound);
+        Debug.Log($"Round {currentRound} started");
     }
 
     private IEnumerator WaitForRoundEnd()
@@ -114,7 +107,7 @@ public class StageManager : MonoBehaviour
 
             if (elapsed >= nextSpawnTime)
             {
-                if (!GameManager.Instance.Ability.DisableEnemySpawning && aliveEnemyCount < spawnTargetCount)
+                if (!GameManager.Instance.Ability.DisableEnemySpawning)
                 {
                     SpawnEnemy();
                 }
@@ -133,24 +126,19 @@ public class StageManager : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        var spawnPosition = GetSpawnPosition(nextSpawnIndex, spawnTargetCount);
-        var enemyData = availableEnemies[(currentWave + nextSpawnIndex) % availableEnemies.Count];
+        var spawnPosition = GetSpawnPosition();
+        var enemyData = availableEnemies.PickRandom();
         var enemy = Instantiate(enemyData.Prefab, spawnPosition, Quaternion.identity);
         enemy.Initialize(enemyData, currentWave);
         aliveEnemyCount++;
-        nextSpawnIndex++;
     }
 
-    private Vector3 GetSpawnPosition(int spawnIndex, int spawnCount)
+    private Vector3 GetSpawnPosition()
     {
-        var normalizedIndex = spawnIndex / (float)spawnCount;
-        var angle = normalizedIndex * Mathf.PI * 2f;
-        var radiusT = (spawnIndex % 5) / 4f;
-        var radius = Mathf.Lerp(spawnInnerRadius, spawnOuterRadius, radiusT);
-
         var spawnPosition = Vector3.zero;
-        spawnPosition.x = Mathf.Cos(angle) * radius;
-        spawnPosition.z = Mathf.Sin(angle) * radius;
+        var randomPosition = Random.insideUnitCircle * Random.Range(spawnInnerRadius, spawnOuterRadius);
+        spawnPosition.x = randomPosition.x;
+        spawnPosition.z = randomPosition.y;
         return spawnPosition;
     }
 
@@ -164,14 +152,9 @@ public class StageManager : MonoBehaviour
         return roundDurations[currentRound - 1];
     }
 
-    private int GetCurrentWave()
+    private List<EnemyData> GetAvailableEnemies(int round)
     {
-        return currentRound;
-    }
-
-    private List<EnemyData> GetAvailableEnemies(int wave)
-    {
-        return enemyCatalog.Where(enemyData => enemyData.StartWave <= wave).ToList();
+        return enemyCatalog.Where(enemyData => enemyData.StartWave <= round).ToList();
     }
 
     private void HandleAgentOnDeath(Enemy deadEnemy)
