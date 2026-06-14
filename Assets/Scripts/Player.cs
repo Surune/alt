@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
     [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float speed = 4.5f;
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
+    [SerializeField] private TMP_Text reloadText;
+    [SerializeField] private Transform reloadProgress;
+    [SerializeField] private Transform reloadProgressFill;
 
     private readonly List<WeaponData> ownedWeapons = new();
     private readonly Dictionary<WeaponData, int> magazineAmmo = new();
@@ -29,6 +33,7 @@ public class Player : MonoBehaviour
     private float nextBurstShotTime;
     private float nextReloadBulletTime;
     private float reloadBulletInterval;
+    private float reloadStartTime;
     private float damageInvincibilityEndTime;
     private int queuedBurstShots;
     private int barrier;
@@ -55,6 +60,7 @@ public class Player : MonoBehaviour
         ownedWeapons.Add(startingWeapon);
         magazineAmmo.Add(startingWeapon, startingWeapon.MagazineSize);
         NotifyCurrentWeaponChanged();
+        UpdateReloadText();
 
         Debug.Log($"Starting weapon: {CurrentWeapon.DisplayName}");
     }
@@ -73,6 +79,7 @@ public class Player : MonoBehaviour
         if (isReloading)
         {
             UpdateReload();
+            UpdateReloadProgress();
         }
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
@@ -104,6 +111,12 @@ public class Player : MonoBehaviour
         {
             UseFearShot();
         }
+    }
+
+    private void LateUpdate()
+    {
+        reloadText.transform.rotation = cam.transform.rotation;
+        reloadProgress.rotation = cam.transform.rotation;
     }
 
     private void FixedUpdate()
@@ -203,7 +216,11 @@ public class Player : MonoBehaviour
         queuedBurstShots = 0;
         reloadBulletInterval = CurrentWeapon.ReloadDuration
             / (CurrentWeapon.MagazineSize - magazineAmmo[CurrentWeapon]);
+        reloadStartTime = Time.time;
         nextReloadBulletTime = Time.time + reloadBulletInterval;
+        reloadProgress.gameObject.SetActive(true);
+        SetReloadProgress(0f);
+        UpdateReloadText();
     }
 
     private void UpdateReload()
@@ -217,6 +234,7 @@ public class Player : MonoBehaviour
             {
                 isReloading = false;
                 nextShotTime = Time.time;
+                reloadProgress.gameObject.SetActive(false);
                 return;
             }
 
@@ -296,6 +314,7 @@ public class Player : MonoBehaviour
         nextBurstShotTime = 0f;
         nextShotTime = Time.time;
         isReloading = false;
+        reloadProgress.gameObject.SetActive(false);
         NotifyCurrentWeaponChanged();
         NotifyMagazineAmmoChanged();
 
@@ -472,10 +491,37 @@ public class Player : MonoBehaviour
     private void NotifyMagazineAmmoChanged()
     {
         MagazineAmmoChanged?.Invoke(magazineAmmo[CurrentWeapon]);
+        UpdateReloadText();
     }
 
     private void NotifyHealthChanged()
     {
         HealthChanged?.Invoke(currentHealth);
+    }
+
+    private void UpdateReloadText()
+    {
+        reloadText.gameObject.SetActive(
+            magazineAmmo[CurrentWeapon] == 0 && !isReloading
+        );
+    }
+
+    private void UpdateReloadProgress()
+    {
+        SetReloadProgress(
+            (Time.time - reloadStartTime) / CurrentWeapon.ReloadDuration
+        );
+    }
+
+    private void SetReloadProgress(float progress)
+    {
+        progress = Mathf.Clamp01(progress);
+        var scale = reloadProgressFill.localScale;
+        scale.x = progress;
+        reloadProgressFill.localScale = scale;
+
+        var position = reloadProgressFill.localPosition;
+        position.x = (progress - 1f) * 0.5f;
+        reloadProgressFill.localPosition = position;
     }
 }
