@@ -92,11 +92,6 @@ public class PlayerProjectile : MonoBehaviour
         var collidedGameObject = collision.gameObject;
         if (collidedGameObject.CompareTag("Obstacle"))
         {
-            if (dropsBloodPickup)
-            {
-                SpawnBloodPickup();
-            }
-
             Release();
         }
     }
