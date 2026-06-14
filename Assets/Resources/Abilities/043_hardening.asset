@@ -17,6 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: aa96d56b7b09f420ea41d20422b9a892, type: 3}
   primarySynergy: 8
   secondarySynergy: 0
+  healthCost: 5
   effects:
   - kind: 0
     abilityManagerFlag: 0
