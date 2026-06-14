@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   button: {fileID: 6687373216461664275}
-  scene: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
+  sceneName: MainScene
 --- !u!1 &6338464305582483800
 GameObject:
   m_ObjectHideFlags: 0

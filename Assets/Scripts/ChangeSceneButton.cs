@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,10 +5,10 @@ using UnityEngine.UI;
 public class ChangeSceneButton : MonoBehaviour
 {
     [SerializeField] private Button button;
-    [SerializeField] private SceneAsset scene;
+    [SerializeField] private string sceneName;
 
     private void Awake()
     {
-        button.onClick.AddListener(() => SceneManager.LoadScene(scene.name));
+        button.onClick.AddListener(() => SceneManager.LoadScene(sceneName));
     }
 }
