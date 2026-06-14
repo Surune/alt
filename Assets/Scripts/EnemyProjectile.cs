@@ -60,14 +60,6 @@ public class EnemyProjectile : MonoBehaviour
         }
     }
 
-    public static void ClearAll()
-    {
-        for (var i = ActiveProjectiles.Count - 1; i >= 0; i--)
-        {
-            ActiveProjectiles[i].Release();
-        }
-    }
-
     private void Release()
     {
         if (!isActive)

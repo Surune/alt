@@ -14,10 +14,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Rigidbody rb;
     [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private InputActionReference fearShotAction;
     [SerializeField] private WeaponData startingWeapon;
     [SerializeField] private int startingHealth = 25;
-    [SerializeField] private int fearShotCount = 1;
     [SerializeField] private float speed = 4.5f;
     [SerializeField] private float damageInvincibilityDuration = 0.5f;
     [SerializeField] private TMP_Text reloadText;
@@ -101,15 +99,10 @@ public class Player : MonoBehaviour
                     StartReload();
                 }
             }
-            else if (Mouse.current.leftButton.isPressed && Time.time >= nextShotTime)
+            else if (Mouse.current.leftButton.wasPressedThisFrame && Time.time >= nextShotTime)
             {
                 StartAttack();
             }
-        }
-
-        if (fearShotAction.action.WasPressedThisFrame())
-        {
-            UseFearShot();
         }
     }
 
@@ -319,17 +312,6 @@ public class Player : MonoBehaviour
         NotifyMagazineAmmoChanged();
 
         Debug.Log($"Switched weapon: {CurrentWeapon.DisplayName}");
-    }
-
-    private void UseFearShot()
-    {
-        if (fearShotCount <= 0)
-        {
-            return;
-        }
-
-        fearShotCount--;
-        EnemyProjectile.ClearAll();
     }
 
     private Vector3 GetAimDirection()
